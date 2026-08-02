@@ -1,7 +1,7 @@
 // worker.js
 var LISTMONK_BASE = "https://edm.ruby.tw/api";
 var LISTMONK_LIST_ID = 11; // COSCUP2026-Booth (uuid 87b9fdf5-7370-498e-9be1-5792bd7709fc)
-var LISTMONK_TX_TEMPLATE_ID = 5;
+var LISTMONK_TX_TEMPLATE_ID = 6; // COSCUP 2026 攤位大地遊戲完成通知
 var CORS = {
   "Access-Control-Allow-Origin": "https://coscup2026.ruby.tw",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
