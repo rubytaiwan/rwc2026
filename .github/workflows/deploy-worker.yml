@@ -1,0 +1,22 @@
+name: Deploy subscribe Worker
+
+on:
+  push:
+    branches: [main]
+    paths: ['workers/coscup2026-subscribe/**']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: workers/coscup2026-subscribe
+          secrets: |
+            LISTMONK_API_TOKEN
+        env:
+          LISTMONK_API_TOKEN: ${{ secrets.LISTMONK_API_TOKEN }}
