@@ -22,7 +22,7 @@ var worker_default = {
       return new Response("Bad Request", { status: 400 });
     }
     const a = body.attribs || {};
-    const auth = `Basic ${btoa(`sitcon2026-booth:${env.LISTMONK_API_TOKEN}`)}`;
+    const auth = `Basic ${btoa(`coscup2026-booth:${env.LISTMONK_API_TOKEN}`)}`;
     const headers = { "Content-Type": "application/json", "Authorization": auth };
     const createResp = await fetch(`${LISTMONK_BASE}/subscribers`, {
       method: "POST",
