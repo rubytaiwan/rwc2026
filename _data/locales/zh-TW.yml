@@ -1,17 +1,17 @@
 # ── 繁體中文 (zh-TW) UI 字串 ─────────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby 互動煉金術 | SITCON 2026"
+site_title: "Ruby 互動煉金術 | COSCUP 2026"
 html_lang: "zh-Hant-TW"
 date_locale: "zh-TW"
 
 # ── Section Header ──
 header_tag: "// RUBY 互動煉金術 BOOTH CHALLENGE"
 header_title: "學 Ruby，從今天開始"
-header_subtitle: "7 題 Ruby 基礎 + 3 題跨語言對照，執行真實 Ruby 程式碼，完成後領取小禮物！"
+header_subtitle: "5 題 Ruby 基礎 + 3 題跨語言對照，執行真實 Ruby 程式碼，完成後領取小禮物！"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "第 1 / 7 題"
+quiz_progress_init: "第 1 / 5 題"
 quiz_score_init: "⭐ 0 題答對"
 quiz_loading: "載入中…"
 quiz_input_placeholder: ".方法名稱"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "真實 Ruby 4.0 在瀏覽器中執行"
 quiz_output_waiting: "等待執行…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "第 {n} / 7 題"
+quiz_progress: "第 {n} / 5 題"
 crosslang_progress: "跨語言 {n} / 3 題"
 quiz_score: "⭐ {n} 題答對"
 diff_easy: "Easy"
@@ -51,23 +51,23 @@ feedback_exhausted: "3 次機會用完，答案是："
 
 # ── Result Phase ──
 result_title: "🎉 挑戰完成！"
-result_great: "太厲害了！{n}/10 全都難不倒你 🔥"
-result_good: "答對 {n}/10 題，Ruby 功力大增！"
-result_encourage: "答對 {n}/10 題，繼續加油！"
+result_great: "太厲害了！{n}/8 全都難不倒你 🔥"
+result_good: "答對 {n}/8 題，Ruby 功力大增！"
+result_encourage: "答對 {n}/8 題，繼續加油！"
 result_share_btn: "📲 分享到 IG"
 result_download_btn: "⬇️ 下載圖片"
 result_tag_reminder: "分享後記得 tag <strong>@rubytaiwan2008</strong> 喔！"
 result_next_btn: "繼續 → 填寫資料領禮物"
 
 # ── Canvas Scorecard (fillText) ──
-canvas_top_label: "SITCON 2026 × RUBY TAIWAN"
+canvas_top_label: "COSCUP 2026 × RUBY TAIWAN"
 canvas_tagline: "Ruby 互動煉金術"
-canvas_hashtags: "@rubytaiwan2008  #SITCON2026"
+canvas_hashtags: "@rubytaiwan2008  #COSCUP2026"
 
 # ── Web Share API ──
-share_title: "Ruby 互動煉金術 — SITCON 2026"
-share_text: "我在 SITCON 2026 完成了 Ruby 挑戰！答對 {n}/10 題 @rubytaiwan2008 #SITCON2026 #RubyTaiwan"
-share_filename: "ruby-challenge-sitcon2026.png"
+share_title: "Ruby 互動煉金術 — COSCUP 2026"
+share_text: "我在 COSCUP 2026 完成了 Ruby 挑戰！答對 {n}/8 題 @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
+share_filename: "ruby-challenge-coscup2026.png"
 
 # ── Form Phase ──
 form_title: "📝 填寫資料"
@@ -90,13 +90,13 @@ form_submitting: "送出中…"
 form_validation_error: "請填寫暱稱和 Email"
 
 # ── Proof Phase ──
-proof_event_label: "SITCON 2026 × RUBY TAIWAN"
+proof_event_label: "COSCUP 2026 × RUBY TAIWAN"
 proof_title: "✅ 挑戰完成！"
 proof_show_staff: "🎁 請出示此畫面給工作人員"
 proof_show_staff_sub: "完成大地遊戲並領取小禮物"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × SITCON 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "我正在學 Ruby，有一道練習題。請用「引導式學習（Guided Learning）」的方式幫我，不要直接給答案，而是透過提問和漸進提示引導我自己找出解法。"

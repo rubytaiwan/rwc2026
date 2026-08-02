@@ -13,7 +13,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 20]
-  question: "Get your act together! Sort secret from smallest to largest."
+  question: "Get your act together! Sort gem from smallest to largest."
   answer: ".sort"
   tips:
     - { code: "[3,1,2].sort", desc: "Sort ascending" }
@@ -27,7 +27,7 @@
   secret_type: array
   array_length: 4
   element_range: [1, 9]
-  question: "Last one out! Remove and return the last element of secret."
+  question: "Last one out! Remove and return the last element of gem."
   answer: ".pop"
   tips:
     - { code: "[1,2,3].pop", desc: "Remove and return last element" }
@@ -39,8 +39,8 @@
 - category: String Operations
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, code, wasm]
-  question: "Break it apart! Split secret into individual characters."
+  secret_pool: [ruby, coscup, meme, code, wasm]
+  question: "Break it apart! Split gem into individual characters."
   answer: ".chars"
   tips:
     - { code: '"hello".chars', desc: "Split into character array" }
@@ -53,7 +53,7 @@
   difficulty: easy
   secret_type: integer
   secret_range: [1, 100]
-  question: "Good vibes only! Is secret a positive number?"
+  question: "Good vibes only! Is gem a positive number?"
   answer: ".positive?"
   tips:
     - { code: "42.positive?", desc: "Is it positive?" }
@@ -65,8 +65,8 @@
 - category: String Operations
   difficulty: easy
   secret_type: string
-  secret_pool: ["", "ruby", "", "sitcon"]
-  question: "Wait... is there anything in secret? Check if it's empty!"
+  secret_pool: ["", "ruby", "", "coscup"]
+  question: "Wait... is there anything in gem? Check if it's empty!"
   answer: ".empty?"
   tips:
     - { code: '"".empty?', desc: "Empty string → true" }
@@ -84,7 +84,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 20]
-  question: "Shuffle the deck! Randomize the order of elements in secret."
+  question: "Shuffle the deck! Randomize the order of elements in gem."
   answer: ".shuffle"
   tips:
     - { code: "[1,2,3].shuffle", desc: "Randomize order" }
@@ -96,8 +96,8 @@
 - category: Object Operations
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, hello, world]
-  question: "Hard lock! Freeze secret so it can never be modified again."
+  secret_pool: [ruby, coscup, meme, hello, world]
+  question: "Hard lock! Freeze gem so it can never be modified again."
   answer: ".freeze"
   tips:
     - { code: '"hello".freeze', desc: "Freeze a string" }
@@ -111,7 +111,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 9]
-  question: "Musical chairs! Move the first element of secret to the back of the line."
+  question: "Musical chairs! Move the first element of gem to the back of the line."
   answer: ".rotate"
   tips:
     - { code: "[1,2,3].rotate", desc: "Rotate by one position" }
@@ -124,7 +124,7 @@
   difficulty: medium
   secret_type: integer
   secret_range: [0, 0]
-  question: "Absolutely nothing! Check if secret is zero."
+  question: "Absolutely nothing! Check if gem is zero."
   answer: ".zero?"
   tips:
     - { code: "0.zero?", desc: "Zero → true" }
@@ -138,7 +138,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 99]
-  question: "Pick a card, any card! Randomly draw one element from secret."
+  question: "Pick a card, any card! Randomly draw one element from gem."
   answer: ".sample"
   tips:
     - { code: "[1,2,3].sample", desc: "Pick one at random" }
@@ -154,8 +154,8 @@
 - category: Object Operations
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, kaigi]
-  question: "Copy-paste time! Make an independent duplicate of secret."
+  secret_pool: [ruby, coscup, meme, kaigi]
+  question: "Copy-paste time! Make an independent duplicate of gem."
   answer: ".dup"
   tips:
     - { code: '"hello".dup', desc: "Duplicate an object" }
@@ -168,7 +168,7 @@
   difficulty: hard
   secret_type: integer
   secret_range: [-99, -1]
-  question: "Flip the negativity! Convert secret to its absolute value."
+  question: "Flip the negativity! Convert gem to its absolute value."
   answer: ".abs"
   tips:
     - { code: "(-42).abs", desc: "Absolute value → 42" }
@@ -180,8 +180,8 @@
 - category: Object Operations
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, kaigi]
-  question: "Look closely! Reveal the true internal representation of secret."
+  secret_pool: [ruby, coscup, meme, kaigi]
+  question: "Look closely! Reveal the true internal representation of gem."
   answer: ".inspect"
   tips:
     - { code: '"hello".inspect', desc: '→ "\"hello\""' }
@@ -194,7 +194,7 @@
   difficulty: hard
   secret_type: string
   secret_pool: [ruby, love, live, idol]
-  question: "Symbolize it! Convert secret from a String into a Symbol."
+  question: "Symbolize it! Convert gem from a String into a Symbol."
   answer: ".to_sym"
   tips:
     - { code: '"hello".to_sym', desc: "String → Symbol" }
@@ -210,7 +210,7 @@
     - [[1, 2], [3, [4, 5]], [6]]
     - [[7, [8]], [9, 10], [[11]]]
     - [[1], [2, [3, [4]]], [5]]
-  question: "Flatten it out! Turn secret's nested arrays into one flat array."
+  question: "Flatten it out! Turn gem's nested arrays into one flat array."
   answer: ".flatten"
   tips:
     - { code: "[[1,2],[3,4]].flatten", desc: "Flatten nested arrays" }

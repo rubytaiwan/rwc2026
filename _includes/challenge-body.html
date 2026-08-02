@@ -375,7 +375,7 @@
 
         <div style="font-size: 52px; font-weight: 800; margin: 0 0 20px; line-height: 1;">
           <span id="proof-score">0</span>
-          <span style="font-size: 24px; opacity: 0.7;"> / 10</span>
+          <span style="font-size: 24px; opacity: 0.7;"> / 8</span>
         </div>
 
         <!-- QR Code -->
@@ -426,24 +426,24 @@ function tpl(template, vars) {
 }
 
 // ── 設定 ─────────────────────────────────────────────────
-const STANDARD_QUESTIONS = 7;
+const STANDARD_QUESTIONS = 5;
 const CROSSLANG_COUNT    = 3;
-const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 10
+const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 8
 const MAX_ATTEMPTS       = 3;
-const SALT               = 'SITCON2026RubyTaiwan';
+const SALT               = 'COSCUP2026RubyTaiwan';
 
-// listmonk 設定（部署在 edm.ruby.tw/sitcon2026 時同 origin，無 CORS 問題）
+// listmonk 設定（經 Cloudflare Worker 代轉，CORS origin 鎖定 coscup2026.ruby.tw）
 const SUBMIT_URL         = '{{ site.listmonk_submit_url }}';
 const LISTMONK_LIST_UUID = '{{ site.listmonk_list_uuid }}';
 
 // ── 題目定義 — 從 _data/tasks/[lang].yml 注入 ─────────────
 const TASK_DEFS = {{ site.data.tasks[page.lang] | jsonify }};
 
-// ── crosslang 題庫 — 從 _data/crosslang/*.yml 注入 ────────
+// ── crosslang 題庫 — 從 _data/crosslang/[lang]/*.yml 注入 ─
 const CROSSLANG_DEFS = {
-  javascript: {{ site.data.crosslang.javascript | jsonify }},
-  python:     {{ site.data.crosslang.python | jsonify }},
-  php:        {{ site.data.crosslang.php | jsonify }},
+  javascript: {{ site.data.crosslang[page.lang].javascript | jsonify }},
+  python:     {{ site.data.crosslang[page.lang].python | jsonify }},
+  php:        {{ site.data.crosslang[page.lang].php | jsonify }},
 };
 
 // ── secret 生成 ──────────────────────────────────────────
@@ -497,15 +497,15 @@ function buildQuestion(def, raw) {
     category:    def.category,
     difficulty:  def.difficulty,
     question:    def.question.replace('{secret}', displayVal),
-    codeLine1:   `secret = ${rubyLiteral}`,
-    inputPrefix: 'puts secret',
+    codeLine1:   `gem = ${rubyLiteral}`,
+    inputPrefix: 'puts gem',
     expected:    null,
     answer:      def.answer,
     seed,
     rubyCode: (input) => [
       ...(seed !== null ? [`srand(${seed})`] : []),
-      `secret = ${rubyLiteral}`,
-      `puts secret${input}`,
+      `gem = ${rubyLiteral}`,
+      `puts gem${input}`,
     ].join('\n'),
     tips: def.tips,
   };
@@ -530,7 +530,7 @@ function clearSavedState() {
   try { sessionStorage.removeItem(SAVE_KEY); } catch (_) {}
 }
 
-// ── 7 題梯度出題 (3E + 3M + 1H) ──────────────────────────
+// ── 5 題梯度出題 (2E + 2M + 1H) ──────────────────────────
 let quizQuestions = [];
 
 function prepareQuiz(restoredMeta) {
@@ -544,8 +544,8 @@ function prepareQuiz(restoredMeta) {
   const medIdx  = TASK_DEFS.flatMap((t, i) => t.difficulty === 'medium' ? [i] : []);
   const hardIdx = TASK_DEFS.flatMap((t, i) => t.difficulty === 'hard'   ? [i] : []);
   const selected = [
-    ...pickIdx(easyIdx, Math.min(3, easyIdx.length)),
-    ...pickIdx(medIdx,  Math.min(3, medIdx.length)),
+    ...pickIdx(easyIdx, Math.min(2, easyIdx.length)),
+    ...pickIdx(medIdx,  Math.min(2, medIdx.length)),
     ...pickIdx(hardIdx, Math.min(1, hardIdx.length)),
   ];
   quizMeta      = selected.map(di => ({ di, raw: generateSecret(TASK_DEFS[di]) }));
@@ -715,7 +715,7 @@ function showAnswerReveal(q) {
         <span style="font-size:14px;font-weight:700;color:#991b1b;">${UI.feedback_exhausted}</span>
       </div>
       <code style="font-family:monospace;font-size:14px;color:#7f1d1d;background:#fee2e2;border-radius:6px;padding:6px 12px;display:inline-block;">
-        puts secret${escHtml(q.answer)}
+        puts gem${escHtml(q.answer)}
       </code>
     </div>`;
 }
@@ -930,7 +930,7 @@ ${UI.ai_prompt_question_label}${q.question}
 ${UI.ai_prompt_code_label}
 \`\`\`ruby
 ${q.codeLine1}
-puts secret.???   ${UI.ai_prompt_code_comment}
+puts gem.???   ${UI.ai_prompt_code_comment}
 \`\`\`
 
 ${UI.ai_prompt_instruction}`;
@@ -947,9 +947,9 @@ ${UI.ai_prompt_instruction}`;
 // ── Phase Result: Canvas 成績單 ───────────────────────────
 function renderResult() {
   const sub = document.getElementById('result-subtitle');
-  sub.textContent = correctCount >= 8
+  sub.textContent = correctCount >= 7
     ? tpl(UI.result_great, { n: correctCount })
-    : correctCount >= 5
+    : correctCount >= 4
     ? tpl(UI.result_good, { n: correctCount })
     : tpl(UI.result_encourage, { n: correctCount });
 
@@ -991,9 +991,9 @@ function drawScoreCard() {
 
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
     ctx.font = '600 80px Montserrat, sans-serif';
-    ctx.fillText('/ 10', W/2, H*0.52 + 90);
+    ctx.fillText(`/ ${TOTAL_QUESTIONS}`, W/2, H*0.52 + 90);
 
-    const stars = '⭐'.repeat(correctCount) + '○'.repeat(10 - correctCount);
+    const stars = '⭐'.repeat(correctCount) + '○'.repeat(TOTAL_QUESTIONS - correctCount);
     ctx.font = '52px sans-serif';
     ctx.fillStyle = '#fff';
     ctx.fillText(stars.slice(0, 10), W/2, H*0.72);

@@ -1,0 +1,38 @@
+- id: js_odd_filter
+  code: "[1, 2, 3, 4, 5].filter(n => n % 2 !== 0)\n// => [1, 3, 5]"
+  expected: "[1, 3, 5]"
+  answer: "[1, 2, 3, 4, 5].select(&:odd?)"
+  tips:
+    - { code: "Array#select", desc: "Filter elements matching a condition" }
+    - { code: "Integer#odd?", desc: "Check whether a number is odd" }
+    - { code: "Symbol#to_proc (&:odd?)", desc: "Turn a method name into a Proc" }
+
+- id: js_sum
+  code: "[1, 2, 3, 4, 5].reduce((acc, n) => acc + n, 0)\n// => 15"
+  expected: "15"
+  answer: "[1, 2, 3, 4, 5].sum"
+  tips:
+    - { code: "Array#sum", desc: "Sum all elements" }
+    - { code: "Array#reduce(:+)", desc: "This works too" }
+
+- id: js_reverse_string
+  code: "\"hello\".split(\"\").reverse().join(\"\")\n// => \"olleh\""
+  expected: "olleh"
+  answer: '"hello".reverse'
+  tips:
+    - { code: "String#reverse", desc: "Reverse a string" }
+
+- id: js_square
+  code: "[1, 2, 3].map(n => n ** 2)\n// => [1, 4, 9]"
+  expected: "[1, 4, 9]"
+  answer: "[1, 2, 3].map { |n| n ** 2 }"
+  tips:
+    - { code: "Array#map", desc: "Transform each element" }
+    - { code: "** operator", desc: "Exponentiation" }
+
+- id: js_max
+  code: "Math.max(...[3, 1, 4, 1, 5, 9, 2, 6])\n// => 9"
+  expected: "9"
+  answer: "[3, 1, 4, 1, 5, 9, 2, 6].max"
+  tips:
+    - { code: "Array#max", desc: "Get the maximum value" }

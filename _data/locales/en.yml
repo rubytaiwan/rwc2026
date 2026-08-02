@@ -1,17 +1,17 @@
 # ── English (en) UI strings ───────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby Interactive Alchemy | SITCON 2026"
+site_title: "Ruby Interactive Alchemy | COSCUP 2026"
 html_lang: "en"
 date_locale: "en-US"
 
 # ── Section Header ──
 header_tag: "// RUBY INTERACTIVE ALCHEMY BOOTH CHALLENGE"
 header_title: "Start Learning Ruby Today"
-header_subtitle: "7 Ruby basics + 3 cross-language questions — run real Ruby code and claim your gift at the booth!"
+header_subtitle: "5 Ruby basics + 3 cross-language questions — run real Ruby code and claim your gift at the booth!"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "Q 1 / 7"
+quiz_progress_init: "Q 1 / 5"
 quiz_score_init: "⭐ 0 correct"
 quiz_loading: "Loading…"
 quiz_input_placeholder: ".method_name"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "Real Ruby 4.0 running in your browser"
 quiz_output_waiting: "Waiting for output…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "Q {n} / 7"
+quiz_progress: "Q {n} / 5"
 crosslang_progress: "Cross-lang {n} / 3"
 quiz_score: "⭐ {n} correct"
 diff_easy: "Easy"
@@ -51,23 +51,23 @@ feedback_exhausted: "No attempts left. The answer is:"
 
 # ── Result Phase ──
 result_title: "🎉 Challenge Complete!"
-result_great: "Amazing! {n}/10 — nothing could stop you 🔥"
-result_good: "Got {n}/10 — your Ruby skills are leveling up!"
-result_encourage: "Got {n}/10 — keep it up!"
+result_great: "Amazing! {n}/8 — nothing could stop you 🔥"
+result_good: "Got {n}/8 — your Ruby skills are leveling up!"
+result_encourage: "Got {n}/8 — keep it up!"
 result_share_btn: "📲 Share to IG"
 result_download_btn: "⬇️ Download"
 result_tag_reminder: "Remember to tag <strong>@rubytaiwan2008</strong> when you share!"
 result_next_btn: "Continue → Fill in your info to claim the gift"
 
 # ── Canvas Scorecard (fillText) ──
-canvas_top_label: "SITCON 2026 × RUBY TAIWAN"
+canvas_top_label: "COSCUP 2026 × RUBY TAIWAN"
 canvas_tagline: "Ruby Interactive Alchemy"
-canvas_hashtags: "@rubytaiwan2008  #SITCON2026"
+canvas_hashtags: "@rubytaiwan2008  #COSCUP2026"
 
 # ── Web Share API ──
-share_title: "Ruby Interactive Alchemy — SITCON 2026"
-share_text: "I completed the Ruby challenge at SITCON 2026! Got {n}/10 @rubytaiwan2008 #SITCON2026 #RubyTaiwan"
-share_filename: "ruby-challenge-sitcon2026.png"
+share_title: "Ruby Interactive Alchemy — COSCUP 2026"
+share_text: "I completed the Ruby challenge at COSCUP 2026! Got {n}/8 @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
+share_filename: "ruby-challenge-coscup2026.png"
 
 # ── Form Phase ──
 form_title: "📝 Your Info"
@@ -90,13 +90,13 @@ form_submitting: "Submitting…"
 form_validation_error: "Please enter your nickname and email"
 
 # ── Proof Phase ──
-proof_event_label: "SITCON 2026 × RUBY TAIWAN"
+proof_event_label: "COSCUP 2026 × RUBY TAIWAN"
 proof_title: "✅ Challenge Complete!"
 proof_show_staff: "🎁 Show this screen to booth staff"
 proof_show_staff_sub: "Complete the booth activity and claim your gift"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × SITCON 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "I'm learning Ruby and have a practice problem. Please help me using the \"Guided Learning\" approach — don't give me the answer directly, but guide me through questions and progressive hints so I can find the solution myself."

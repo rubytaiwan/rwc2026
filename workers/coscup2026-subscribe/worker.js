@@ -1,9 +1,10 @@
 // worker.js
 var LISTMONK_BASE = "https://edm.ruby.tw/api";
+// TODO(deploy 前必改): 在 edm.ruby.tw 建立 COSCUP 2026 list 後填入其 ID（10 是 SITCON list，不可沿用）
 var LISTMONK_LIST_ID = 10;
 var LISTMONK_TX_TEMPLATE_ID = 5;
 var CORS = {
-  "Access-Control-Allow-Origin": "https://sitcon2026-booth.ruby.tw",
+  "Access-Control-Allow-Origin": "https://coscup2026.ruby.tw",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type"
 };

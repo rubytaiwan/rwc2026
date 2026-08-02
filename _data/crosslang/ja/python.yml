@@ -1,0 +1,37 @@
+- id: py_divisible_by_3
+  code: "[n for n in range(1, 11) if n % 3 == 0]\n# => [3, 6, 9]"
+  expected: "[3, 6, 9]"
+  answer: "(1..10).select { |n| n % 3 == 0 }"
+  tips:
+    - { code: "Range#select", desc: "Range も絞り込める" }
+    - { code: "(1..10)", desc: "Ruby の Range オブジェクト" }
+
+- id: py_sum
+  code: "sum([1, 2, 3, 4, 5])\n# => 15"
+  expected: "15"
+  answer: "[1, 2, 3, 4, 5].sum"
+  tips:
+    - { code: "Array#sum", desc: "全要素を合計" }
+
+- id: py_title_case
+  code: "\"hello world\".title()\n# => \"Hello World\""
+  expected: "Hello World"
+  answer: '"hello world".split.map(&:capitalize).join(" ")'
+  tips:
+    - { code: "String#split", desc: "引数なしなら空白で分割" }
+    - { code: "String#capitalize", desc: "先頭を大文字に" }
+    - { code: "Array#join", desc: "配列を文字列に結合" }
+
+- id: py_count_gt
+  code: "len([x for x in [1, 2, 3, 4, 5] if x > 2])\n# => 3"
+  expected: "3"
+  answer: "[1, 2, 3, 4, 5].count { |n| n > 2 }"
+  tips:
+    - { code: "Array#count { |n| ... }", desc: "条件に合う要素を数える" }
+
+- id: py_double
+  code: "list(map(lambda x: x * 2, [1, 2, 3]))\n# => [2, 4, 6]"
+  expected: "[2, 4, 6]"
+  answer: "[1, 2, 3].map { |n| n * 2 }"
+  tips:
+    - { code: "Array#map", desc: "各要素を変換" }

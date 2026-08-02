@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Jekyll 4.4.x static site for the SITCON 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and Ruby 4.0 WebAssembly for in-browser Ruby execution.
+Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and Ruby 4.0 WebAssembly for in-browser Ruby execution.
 
 ## Common Commands
 
@@ -32,6 +32,7 @@ JEKYLL_ENV=production bundle exec jekyll build
 - `index.html` / `en/index.html` / `ja/index.html` — language entry points (each sets `lang:` front matter and includes `challenge-body.html`)
 - `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
+- `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
 - `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js and ruby-wasm browser.umd.js
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
 - `_includes/cover-styles.html` — CSS for the cover section
@@ -45,12 +46,14 @@ JEKYLL_ENV=production bundle exec jekyll build
 
 ### Challenge Game Flow (index.html)
 
-4-phase single-page flow, controlled by `switchPhase(name)`:
+6-phase single-page flow, controlled by `switchPhase(name)`:
 
-1. **quiz** — 10 questions in difficulty gradient (3 easy → 5 medium → 2 hard), drawn from `_data/tasks.yml`. Max 3 attempts per question; reveals answer on failure.
-2. **result** — HTML Canvas 1080×1080 scorecard with logo; Web Share API for IG sharing (falls back to download).
-3. **form** — Collects name, email, phone, school; POSTs to listmonk (`/api/public/subscription`). Failure is non-blocking.
-4. **proof** — Completion certificate with QR code, proof code (`RUBY-{score:02d}-{hash8}`), shimmer animation, live clock.
+1. **quiz** — 5 standard questions in difficulty gradient (2 easy → 2 medium → 1 hard), drawn from `_data/tasks/<lang>.yml`. Max 3 attempts per question; reveals answer on failure. The variable shown to players is named `gem`.
+2. **lang-select** — player picks their primary language (JavaScript / Python / PHP).
+3. **crosslang** — 3 cross-language questions from `_data/crosslang/<lang>/<source>.yml`: familiar source-language code shown, player writes the Ruby equivalent (highlight.js syntax highlighting).
+4. **result** — HTML Canvas 1080×1080 scorecard with logo; Web Share API for IG sharing (falls back to download).
+5. **form** — Collects name, email, phone, school; POSTs to the Cloudflare Worker (`listmonk_submit_url`). Failure is non-blocking.
+6. **proof** — Completion certificate with QR code, proof code (`RUBY-{score:02d}-{hash8}`), shimmer animation, live clock.
 
 ### Task Bank (`_data/tasks/<lang>.yml`)
 
@@ -75,9 +78,9 @@ Three languages: `zh-TW` (default), `en`, `ja`. Each has:
 
 ### listmonk Integration
 
-- API endpoint: `/api/public/subscription` (same-origin when deployed at `edm.ruby.tw/sitcon2026`)
-- List UUID configured in `_config.yml` as `listmonk_list_uuid`, injected into JS via `{{ site.listmonk_list_uuid }}`
-- Deployment at `edm.ruby.tw/sitcon2026` requires `baseurl: "/sitcon2026"` in `_config.yml`
+- Form POSTs to a Cloudflare Worker (`workers/coscup2026-subscribe/`) which relays to `edm.ruby.tw/api`; the Worker's `LISTMONK_LIST_ID` decides which list subscribers land in
+- Worker URL configured in `_config.yml` as `listmonk_submit_url`; CORS origin is locked to `https://coscup2026.ruby.tw`
+- Deploy the Worker with `wrangler deploy` from its directory (`LISTMONK_API_TOKEN` is a Worker secret)
 
 ## Tailwind CSS
 

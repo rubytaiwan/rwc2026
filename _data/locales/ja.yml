@@ -1,17 +1,17 @@
 # ── 日本語 (ja) UI 文字列 ─────────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby インタラクティブ錬金術 | SITCON 2026"
+site_title: "Ruby インタラクティブ錬金術 | COSCUP 2026"
 html_lang: "ja"
 date_locale: "ja-JP"
 
 # ── Section Header ──
 header_tag: "// RUBY インタラクティブ錬金術 ブースチャレンジ"
 header_title: "今日から Ruby を始めよう"
-header_subtitle: "Ruby基礎7問 + 言語対照3問、本物のコードを実行して、ブースでギフトをもらおう！"
+header_subtitle: "Ruby基礎5問 + 言語対照3問、本物のコードを実行して、ブースでギフトをもらおう！"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "第 1 / 7 問"
+quiz_progress_init: "第 1 / 5 問"
 quiz_score_init: "⭐ 0 問正解"
 quiz_loading: "読み込み中…"
 quiz_input_placeholder: ".メソッド名"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "本物の Ruby 4.0 がブラウザで動く"
 quiz_output_waiting: "実行待ち…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "第 {n} / 7 問"
+quiz_progress: "第 {n} / 5 問"
 crosslang_progress: "言語対照 {n} / 3 問"
 quiz_score: "⭐ {n} 問正解"
 diff_easy: "Easy"
@@ -51,23 +51,23 @@ feedback_exhausted: "チャンス終了。正解は："
 
 # ── Result Phase ──
 result_title: "🎉 チャレンジ完了！"
-result_great: "すごい！{n}/10 全問正解 🔥"
-result_good: "{n}/10 正解、Ruby の実力が上がった！"
-result_encourage: "{n}/10 正解、引き続き頑張ろう！"
+result_great: "すごい！{n}/8 全問正解 🔥"
+result_good: "{n}/8 正解、Ruby の実力が上がった！"
+result_encourage: "{n}/8 正解、引き続き頑張ろう！"
 result_share_btn: "📲 IG にシェア"
 result_download_btn: "⬇️ 画像をダウンロード"
 result_tag_reminder: "シェアするときは <strong>@rubytaiwan2008</strong> をタグ付けしてね！"
 result_next_btn: "次へ → 情報を入力してギフトをもらう"
 
 # ── Canvas Scorecard (fillText) ──
-canvas_top_label: "SITCON 2026 × RUBY TAIWAN"
+canvas_top_label: "COSCUP 2026 × RUBY TAIWAN"
 canvas_tagline: "Ruby インタラクティブ錬金術"
-canvas_hashtags: "@rubytaiwan2008  #SITCON2026"
+canvas_hashtags: "@rubytaiwan2008  #COSCUP2026"
 
 # ── Web Share API ──
-share_title: "Ruby インタラクティブ錬金術 — SITCON 2026"
-share_text: "SITCON 2026 の Ruby チャレンジを完了！{n}/10 問正解 @rubytaiwan2008 #SITCON2026 #RubyTaiwan"
-share_filename: "ruby-challenge-sitcon2026.png"
+share_title: "Ruby インタラクティブ錬金術 — COSCUP 2026"
+share_text: "COSCUP 2026 の Ruby チャレンジを完了！{n}/8 問正解 @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
+share_filename: "ruby-challenge-coscup2026.png"
 
 # ── Form Phase ──
 form_title: "📝 情報を入力"
@@ -90,13 +90,13 @@ form_submitting: "送信中…"
 form_validation_error: "ニックネームとEmailを入力してください"
 
 # ── Proof Phase ──
-proof_event_label: "SITCON 2026 × RUBY TAIWAN"
+proof_event_label: "COSCUP 2026 × RUBY TAIWAN"
 proof_title: "✅ チャレンジ完了！"
 proof_show_staff: "🎁 この画面をスタッフに見せてください"
 proof_show_staff_sub: "ブースアクティビティを完了してギフトをもらおう"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × SITCON 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "Rubyを学んでいます。練習問題があります。「ガイド付き学習（Guided Learning）」の方法で助けてください。答えを直接教えずに、質問と段階的なヒントで自分で解法を見つけられるよう導いてください。"

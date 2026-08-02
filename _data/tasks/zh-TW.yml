@@ -20,7 +20,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 20]
-  question: "讓 secret 從從容容游刃有餘～（把陣列排好順序）"
+  question: "讓 gem 從從容容游刃有餘～（把陣列排好順序）"
   answer: ".sort"
   tips:
     - { code: "[3,1,2].sort", desc: "由小到大排序" }
@@ -36,7 +36,7 @@
   secret_type: array
   array_length: 4
   element_range: [1, 9]
-  question: "已購買，小孩愛吃～ 讓 secret 交出最後一個元素"
+  question: "已購買，小孩愛吃～ 讓 gem 交出最後一個元素"
   answer: ".pop"
   tips:
     - { code: "[1,2,3].pop", desc: "取出最後一個元素" }
@@ -50,8 +50,8 @@
 - category: 字串操作
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, code, wasm]
-  question: "我裂開了！讓 secret 也跟著裂開吧（拆成一個一個字元）"
+  secret_pool: [ruby, coscup, meme, code, wasm]
+  question: "我裂開了！讓 gem 也跟著裂開吧（拆成一個一個字元）"
   answer: ".chars"
   tips:
     - { code: '"hello".chars', desc: "拆成字元陣列" }
@@ -67,7 +67,7 @@
   difficulty: easy
   secret_type: integer
   secret_range: [1, 100]
-  question: "大展鴻圖！secret 的未來是正面（positive）的嗎？"
+  question: "大展鴻圖！gem 的未來是正面（positive）的嗎？"
   answer: ".positive?"
   tips:
     - { code: "42.positive?", desc: "是正數嗎？" }
@@ -82,8 +82,8 @@
 - category: 字串操作
   difficulty: easy
   secret_type: string
-  secret_pool: ["", "ruby", "", "sitcon"]
-  question: "誰敢想... secret 裡面竟然什麼都沒有！確認它是不是空的"
+  secret_pool: ["", "ruby", "", "coscup"]
+  question: "誰敢想... gem 裡面竟然什麼都沒有！確認它是不是空的"
   answer: ".empty?"
   tips:
     - { code: '"".empty?', desc: "空字串 → true" }
@@ -119,8 +119,8 @@
 - category: 物件操作
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, hello, world]
-  question: "對 secret 施展硬控！凍結它，讓它再也動不了"
+  secret_pool: [ruby, coscup, meme, hello, world]
+  question: "對 gem 施展硬控！凍結它，讓它再也動不了"
   answer: ".freeze"
   tips:
     - { code: '"hello".freeze', desc: "凍結字串" }
@@ -137,7 +137,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 9]
-  question: "上車嘍～ secret 排隊上車，第一位請到最後面排隊！"
+  question: "上車嘍～ gem 排隊上車，第一位請到最後面排隊！"
   answer: ".rotate"
   tips:
     - { code: "[1,2,3].rotate", desc: "旋轉一位" }
@@ -153,7 +153,7 @@
   difficulty: medium
   secret_type: integer
   secret_range: [0, 0]
-  question: "就像《沒出息》唱的那樣～ secret 是不是歸零了？"
+  question: "就像《沒出息》唱的那樣～ gem 是不是歸零了？"
   answer: ".zero?"
   tips:
     - { code: "0.zero?", desc: "是零 → true" }
@@ -170,7 +170,7 @@
   secret_type: array
   array_length: 5
   element_range: [1, 99]
-  question: "抽卡時間到！從 secret 卡池裡隨機抽一張，看看手氣如何"
+  question: "抽卡時間到！從 gem 卡池裡隨機抽一張，看看手氣如何"
   answer: ".sample"
   tips:
     - { code: "[1,2,3].sample", desc: "隨機取一個" }
@@ -189,8 +189,8 @@
 - category: 物件操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, kaigi]
-  question: "同學，作業借我抄一下！幫 secret 複製一份獨立的物件出來"
+  secret_pool: [ruby, coscup, meme, kaigi]
+  question: "同學，作業借我抄一下！幫 gem 複製一份獨立的物件出來"
   answer: ".dup"
   tips:
     - { code: '"hello".dup', desc: "複製物件" }
@@ -206,7 +206,7 @@
   difficulty: hard
   secret_type: integer
   secret_range: [-99, -1]
-  question: "期中考 secret 分的心情好負面，想辦法把它強制轉成正能量！"
+  question: "期中考 gem 分的心情好負面，想辦法把它強制轉成正能量！"
   answer: ".abs"
   tips:
     - { code: "(-42).abs", desc: "取絕對值 → 42" }
@@ -221,8 +221,8 @@
 - category: 物件操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, sitcon, meme, kaigi]
-  question: "Look in my eyes～ 來，仔細看看 secret 的真面目吧"
+  secret_pool: [ruby, coscup, meme, kaigi]
+  question: "Look in my eyes～ 來，仔細看看 gem 的真面目吧"
   answer: ".inspect"
   tips:
     - { code: '"hello".inspect', desc: '→ "\"hello\""' }
@@ -258,7 +258,7 @@
     - [[1, 2], [3, [4, 5]], [6]]
     - [[7, [8]], [9, 10], [[11]]]
     - [[1], [2, [3, [4]]], [5]]
-  question: "累了嗎？讓 secret 也躺平，攤成一條直線休息一下吧"
+  question: "累了嗎？讓 gem 也躺平，攤成一條直線休息一下吧"
   answer: ".flatten"
   tips:
     - { code: "[[1,2],[3,4]].flatten", desc: "攤平巢狀陣列" }
