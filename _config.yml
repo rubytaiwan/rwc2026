@@ -20,9 +20,8 @@
 
 title: Ruby 互動煉金術 | COSCUP 2026
 
-# listmonk 訂閱設定
-# TODO(上線前必改): 換成 COSCUP 2026 list 的 UUID（此為 SITCON list；實際入 list 由 worker 的 LISTMONK_LIST_ID 決定，兩邊都要換）
-listmonk_list_uuid: "591bfadd-f32c-495c-b6db-e3cf561a4e03"
+# listmonk 訂閱設定（COSCUP2026-Booth list）
+listmonk_list_uuid: "87b9fdf5-7370-498e-9be1-5792bd7709fc"
 listmonk_submit_url: "https://coscup2026-subscribe.contact-db4.workers.dev"
 
 webrick:
