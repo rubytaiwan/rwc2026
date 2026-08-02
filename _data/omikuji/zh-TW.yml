@@ -1,0 +1,48 @@
+# Ruby 御神籤 — 12 支,由 Ruby WASM 的 rand 抽出
+- level: "大吉"
+  method: ".flatten"
+  text: "諸事攤平順利，人生再無巢狀難題"
+
+- level: "大吉"
+  method: ".uniq"
+  text: "獨一無二的機會今天出現，好好把握"
+
+- level: "中吉"
+  method: ".compact"
+  text: "自動濾除生活中的 nil，留下的都是精華"
+
+- level: "中吉"
+  method: ".sort"
+  text: "混亂的事情，會自己排好順序"
+
+- level: "吉"
+  method: ".map"
+  text: "每一分努力，都會映射成收穫"
+
+- level: "吉"
+  method: ".zip"
+  text: "貴人與你並肩同行，合作順利"
+
+- level: "小吉"
+  method: "retry"
+  text: "第一次失敗沒關係，再試一次就過了"
+
+- level: "小吉"
+  method: ".sample"
+  text: "隨遇而安，隨機的選擇也有好結果"
+
+- level: "末吉"
+  method: ".freeze"
+  text: "宜維持現狀，不宜大改動"
+
+- level: "末吉"
+  method: ".first"
+  text: "凡事先求有再求好，從第一步開始"
+
+- level: "凶"
+  method: "raise"
+  text: "今日容易炸 exception，記得隨身攜帶 rescue"
+
+- level: "凶"
+  method: ".nil?"
+  text: "期待可能落空，但明天會 present?"

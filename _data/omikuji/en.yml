@@ -1,0 +1,48 @@
+# Ruby Omikuji — 12 fortunes, drawn by Ruby WASM's rand
+- level: "大吉 Great Blessing"
+  method: ".flatten"
+  text: "Everything flattens out — no more nested problems ahead"
+
+- level: "大吉 Great Blessing"
+  method: ".uniq"
+  text: "A one-of-a-kind opportunity appears today. Seize it"
+
+- level: "中吉 Middle Blessing"
+  method: ".compact"
+  text: "Life filters out the nils — what remains is pure gold"
+
+- level: "中吉 Middle Blessing"
+  method: ".sort"
+  text: "The chaos will sort itself out"
+
+- level: "吉 Blessing"
+  method: ".map"
+  text: "Every effort maps to a reward"
+
+- level: "吉 Blessing"
+  method: ".zip"
+  text: "A great partner walks beside you today"
+
+- level: "小吉 Small Blessing"
+  method: "retry"
+  text: "Failed once? Just retry and you'll pass"
+
+- level: "小吉 Small Blessing"
+  method: ".sample"
+  text: "Go with the flow — a random pick turns out fine"
+
+- level: "末吉 Future Blessing"
+  method: ".freeze"
+  text: "Hold your current state; avoid big changes today"
+
+- level: "末吉 Future Blessing"
+  method: ".first"
+  text: "Done beats perfect — start with the first step"
+
+- level: "凶 Curse"
+  method: "raise"
+  text: "Exceptions may be raised today — carry a rescue with you"
+
+- level: "凶 Curse"
+  method: ".nil?"
+  text: "Expectations may come up empty, but tomorrow is present?"

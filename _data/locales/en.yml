@@ -129,3 +129,10 @@ canvas_lang_prefix: "from"
 lang_switcher_zh: "中文"
 lang_switcher_en: "EN"
 lang_switcher_ja: "JA"
+
+# ── Omikuji ──
+omikuji_btn: "🎋 Draw a Ruby Omikuji"
+omikuji_canvas_title: "Ruby Omikuji"
+omikuji_share_title: "Ruby Omikuji — COSCUP 2026"
+omikuji_share_text: "I drew {level} at the Ruby Taiwan booth, COSCUP 2026! @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
+omikuji_share_filename: "ruby-omikuji-coscup2026.png"

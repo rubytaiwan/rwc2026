@@ -1,0 +1,48 @@
+# Ruby おみくじ — 12 本、Ruby WASM の rand で抽選
+- level: "大吉"
+  method: ".flatten"
+  text: "すべてが平らに、ネストした悩みも解消"
+
+- level: "大吉"
+  method: ".uniq"
+  text: "唯一無二のチャンスが訪れる日、逃さずに"
+
+- level: "中吉"
+  method: ".compact"
+  text: "人生の nil は自動で除去、残るのは本物だけ"
+
+- level: "中吉"
+  method: ".sort"
+  text: "混乱は自然と整列していく"
+
+- level: "吉"
+  method: ".map"
+  text: "努力はすべて成果に写像される"
+
+- level: "吉"
+  method: ".zip"
+  text: "良き相棒と並んで進める日"
+
+- level: "小吉"
+  method: "retry"
+  text: "一度の失敗は問題なし、retry すれば通る"
+
+- level: "小吉"
+  method: ".sample"
+  text: "成り行き任せの選択も吉と出る"
+
+- level: "末吉"
+  method: ".freeze"
+  text: "現状維持が吉、大きな変更は避けて"
+
+- level: "末吉"
+  method: ".first"
+  text: "まずは最初の一歩から"
+
+- level: "凶"
+  method: "raise"
+  text: "例外が発生しやすい日、rescue をお忘れなく"
+
+- level: "凶"
+  method: ".nil?"
+  text: "期待は空振りかも、でも明日は present?"
