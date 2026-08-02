@@ -6,6 +6,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and Ruby 4.0 WebAssembly for in-browser Ruby execution.
 
+## Current Status（2026-08-02）
+
+本 repo 由 `rubytaiwan/sitcon2026-booth` 的 PR #2 branch（`claude/tender-sinoussi-e11ea1`，跨語言功能）直接遷移而來（push 保留完整 history，非 fork）。舊 repo 凍結於 SITCON 狀態，其 PR #2 尚未留言關閉。
+
+### 已完成並上線
+
+- **部署**：`https://coscup2026.ruby.tw`（GitHub Pages + Actions，HTTPS 已強制；DNS 為 Cloudflare 灰雲 CNAME → `rubytaiwan.github.io`）
+- **PR #2 feedback 四項必改**：
+  - 玩家可見變數 `secret` → `gem`（題庫三語 + UI/eval 程式碼）
+  - 題數 7+3 → **5+3 = 8**（2E+2M+1H；所有寫死的 `/10`、星星數、評語門檻已同步）
+  - crosslang tips 三語化（`_data/crosslang/<lang>/`，原本 EN/JA 會看到中文提示）
+  - 全站 COSCUP rebrand（含 `SALT`、`secret_pool` 的 `coscup` 字串、poster、README）
+- **Ruby 御神籤（omikuji）**：proof 頁抽籤按鈕 → Ruby WASM `rand(12)` 抽籤（VM 未就緒退回 JS 亂數）→ 翻卡動畫 + 1080×1080 Canvas 籤詩卡（可分享/下載）。籤池 `_data/omikuji/<lang>.yml` 三語各 12 支
+- **表單**：關閉瀏覽器 autofill（`autocomplete=off` + `type=text` + `inputmode`）；「學校」欄改為「你所屬的組織或學校」；「免費 Ruby 課程興趣」checkbox 已移除
+- **listmonk 訂閱鏈**（E2E 已測通）：表單 → Cloudflare Worker `coscup2026-subscribe` → edm.ruby.tw
+  - List：`COSCUP2026-Booth`（ID 11，UUID `87b9fdf5-…`，設定於 `_config.yml`）
+  - API user：`coscup2026-booth`（token 存於 repo secret `LISTMONK_API_TOKEN`）
+  - 完成通知信：tx template **ID 6**（COSCUP 版，於 listmonk 後台維護）
+- **CI**：push `main` 自動部署 Pages；`workers/coscup2026-subscribe/**` 有變更自動部署 Worker（`.github/workflows/deploy-worker.yml`，需 repo secrets `CLOUDFLARE_API_TOKEN` + `LISTMONK_API_TOKEN`）
+
+### 待辦 / 注意事項
+
+- [ ] Template 6 內的取消訂閱連結 `edm.ruby.tw/subscription/manage?uuid=…` 端點尚未建置（目前 404，屬預期，後續會補）
+- [ ] 舊 repo PR #2：留言說明遷移至本 repo 後關閉
+- [ ] 刪除 listmonk 測試資料：subscriber `ryudo@5xruby.com`（id 1105，E2E 測試用）
+- [ ] 活動後輪替/移除 listmonk 的 `automation-api` API user（token 曾出現於對話）
+- [ ] 現場實測：PHP 跨語言題組、EN/JA 完整流程（SITCON 時未測完的部分）
+- 跨語言題庫每語言僅 5 題抽 3，重複率偏高；如需降低可擴充至 8–10 題
+
 ## Common Commands
 
 ```bash
