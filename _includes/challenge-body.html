@@ -335,10 +335,6 @@
               onfocus="this.style.borderColor='#bd3f32'" onblur="this.style.borderColor='#e8d5d3'"
             >
           </div>
-          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 13px; color: #555;">
-            <input id="form-ruby-course" type="checkbox" style="width: 16px; height: 16px; accent-color: #bd3f32; margin-top: 1px; flex-shrink: 0;">
-            {{ t.form_ruby_course }}
-          </label>
           <div>
             <label style="font-size: 13px; font-weight: 600; color: #323232; display: block; margin-bottom: 6px;">{{ t.form_message_label }}</label>
             <textarea id="form-message" placeholder="{{ t.form_message_placeholder }}" rows="3"
@@ -1152,7 +1148,6 @@ window.submitForm = async function () {
   const email      = document.getElementById('form-email').value.trim();
   const phone      = document.getElementById('form-phone').value.trim();
   const school     = document.getElementById('form-school').value.trim();
-  const rubyCourse = document.getElementById('form-ruby-course').checked;
   const message    = document.getElementById('form-message').value.trim();
 
   if (!name || !email) {
@@ -1175,7 +1170,7 @@ window.submitForm = async function () {
         name,
         list_uuids: [LISTMONK_LIST_UUID],
         attribs: {
-          phone, school, ruby_course_interest: rubyCourse, message,
+          phone, school, message,
           score: correctCount, total: TOTAL_QUESTIONS, lang: selectedLang,
         },
       }),
