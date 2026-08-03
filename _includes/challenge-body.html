@@ -221,6 +221,14 @@
             >
               {{ t.quiz_run_btn }}
             </button>
+            <button
+              id="crosslang-ask-ai-btn"
+              onclick="askAICrosslang()"
+              style="background: #fff; color: #6d28d9; border: 1px solid #7c3aed; border-radius: 8px; padding: 12px 20px; font-size: 14px; font-family: Montserrat, sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;"
+              onmouseover="this.style.background='#f5f3ff'" onmouseout="this.style.background='#fff'"
+            >
+              {{ t.quiz_ask_ai_btn }}
+            </button>
             <span id="crosslang-attempts-badge" style="font-size: 11px; color: #9b9b9b;"></span>
             <span style="font-size: 12px; color: #9b9b9b; font-family: monospace; margin-left: auto;" id="crosslang-ruby-status"></span>
           </div>
@@ -956,6 +964,29 @@ ${UI.ai_prompt_instruction}`;
   window.open('https://chatgpt.com/?prompt=' + encodeURIComponent(prompt), '_blank');
 
   const btn = document.getElementById('ask-ai-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = UI.ask_ai_opening;
+  btn.style.color = '#16a34a'; btn.style.borderColor = '#16a34a';
+  setTimeout(() => { btn.innerHTML = orig; btn.style.color = '#6d28d9'; btn.style.borderColor = '#7c3aed'; }, 2000);
+};
+
+// ── 詢問 AI（跨語言題）──────────────────────────────────
+window.askAICrosslang = function () {
+  const q = crosslangQuestions[crosslangIndex];
+  if (!q) return;
+  const prompt =
+`${UI.ai_prompt_intro}
+
+${UI.ai_prompt_question_label}${UI.crosslang_prompt}
+\`\`\`${q.sourceLang}
+${q.code}
+\`\`\`
+
+${UI.ai_prompt_instruction}`;
+
+  window.open('https://chatgpt.com/?prompt=' + encodeURIComponent(prompt), '_blank');
+
+  const btn = document.getElementById('crosslang-ask-ai-btn');
   const orig = btn.innerHTML;
   btn.innerHTML = UI.ask_ai_opening;
   btn.style.color = '#16a34a'; btn.style.borderColor = '#16a34a';
