@@ -43,13 +43,21 @@ var worker_default = {
       })
     });
     const createData = await createResp.json();
-    if (!createResp.ok && !createData.data?.id) {
-      return new Response(JSON.stringify(createData), {
-        status: createResp.status,
-        headers: { ...CORS, "Content-Type": "application/json" }
-      });
+    let subscriberId = createData.data?.id;
+    if (!subscriberId) {
+      // 建立失敗（多半是 409 email 已存在）→ 查回既有 subscriber，讓重複填表也能寄信
+      const email = String(body.email || "").toLowerCase().replace(/'/g, "''");
+      const query = encodeURIComponent(`subscribers.email='${email}'`);
+      const lookupResp = await fetch(`${LISTMONK_BASE}/subscribers?query=${query}`, { headers });
+      const lookupData = await lookupResp.json();
+      subscriberId = lookupData.data?.results?.[0]?.id;
+      if (!subscriberId) {
+        return new Response(JSON.stringify(createData), {
+          status: createResp.status,
+          headers: { ...CORS, "Content-Type": "application/json" }
+        });
+      }
     }
-    const subscriberId = createData.data?.id;
     if (subscriberId) {
       await fetch(`${LISTMONK_BASE}/subscribers/lists`, {
         method: "PUT",
