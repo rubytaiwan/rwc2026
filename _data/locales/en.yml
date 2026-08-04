@@ -107,14 +107,14 @@ ai_prompt_instruction: "Please start by asking about my initial thoughts, then g
 
 # ── Lang Select Phase ──
 lang_select_title: "What's your main language?"
-lang_select_subtitle: "Next 3 questions: see code in your language, write the Ruby equivalent"
+lang_select_subtitle: "Next 3 questions: see code in your language, pick the Ruby equivalent from 4 options"
 lang_select_js: "JavaScript"
 lang_select_py: "Python"
 lang_select_php: "PHP"
 
 # ── Crosslang Phase ──
-crosslang_prompt: "Write the Ruby equivalent:"
-crosslang_input_placeholder: "Ruby expression"
+crosslang_prompt: "Pick the Ruby equivalent:"
+crosslang_choices_label: "Four options — sometimes two are correct; either one counts"
 crosslang_badge: "Cross-lang Challenge"
 
 # ── Form additions ──

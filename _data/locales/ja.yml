@@ -107,14 +107,14 @@ ai_prompt_instruction: "まず私の最初の考えを聞いてから、必要�
 
 # ── Lang Select Phase ──
 lang_select_title: "普段使っている言語は？"
-lang_select_subtitle: "次の3問：慣れた言語のコードを見て、Rubyで同じ処理を書いてみよう"
+lang_select_subtitle: "次の3問：慣れた言語のコードを見て、4つの選択肢から同じ処理の Ruby を選ぼう"
 lang_select_js: "JavaScript"
 lang_select_py: "Python"
 lang_select_php: "PHP"
 
 # ── Crosslang Phase ──
-crosslang_prompt: "Rubyで同じ結果を返す式を書いてください："
-crosslang_input_placeholder: "Ruby の式"
+crosslang_prompt: "同じ結果になる Ruby の書き方を選んでください："
+crosslang_choices_label: "4つの選択肢。2つ正解の場合もあり、どちらでも正解です"
 crosslang_badge: "クロス言語チャレンジ"
 
 # ── Form additions ──

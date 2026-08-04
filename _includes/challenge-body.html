@@ -192,35 +192,12 @@
             <pre style="margin: 0; border-radius: 8px; overflow-x: auto;"><code id="crosslang-code" style="font-size: 13px; line-height: 1.6;"></code></pre>
           </div>
 
-          <!-- Ruby input (Carbon style) -->
-          <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(50,50,50,0.12);">
-            <div style="background: #2d2d3f; padding: 0 16px; height: 40px; display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #ff5f57; border-radius: 50%; display: inline-block;"></span>
-              <span style="width: 12px; height: 12px; background: #febc2e; border-radius: 50%; display: inline-block;"></span>
-              <span style="width: 12px; height: 12px; background: #28c840; border-radius: 50%; display: inline-block;"></span>
-              <span style="color: #7a6a78; font-size: 12px; font-family: monospace; margin: 0 auto;">ruby_answer.rb</span>
-            </div>
-            <div style="background: #1e1e2e; padding: 16px;">
-              <input
-                id="crosslang-input"
-                type="text"
-                placeholder="{{ t.crosslang_input_placeholder }}"
-                style="background: transparent; border: none; outline: none; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 14px; color: #bd3f32; caret-color: #bd3f32; width: 100%;"
-                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-              >
-            </div>
-          </div>
+          <!-- 4 選 1（點下去就直接在 mruby 裡跑那個選項）-->
+          <p style="font-size: 12px; color: #9b9b9b; margin: 0;">{{ t.crosslang_choices_label }}</p>
+          <div id="crosslang-choices" style="display: flex; flex-direction: column; gap: 10px; margin-top: -10px;"></div>
 
           <!-- Buttons -->
           <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-            <button
-              id="crosslang-run-btn"
-              onclick="runCrosslang()"
-              style="background: #bd3f32; color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 14px; font-weight: 600; font-family: Montserrat, sans-serif; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s;"
-              onmouseover="this.style.background='#a03228'" onmouseout="this.style.background='#bd3f32'"
-            >
-              {{ t.quiz_run_btn }}
-            </button>
             <button
               id="crosslang-ask-ai-btn"
               onclick="askAICrosslang()"
@@ -453,6 +430,8 @@ const STANDARD_QUESTIONS = 5;
 const CROSSLANG_COUNT    = 3;
 const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 8
 const MAX_ATTEMPTS       = 3;
+// 跨語言題是 4 選 1，給 3 次等於 3/4 亂猜就中，所以只給 2 次（= 50%）
+const CROSSLANG_ATTEMPTS = 2;
 const SALT               = 'COSCUP2026RubyTaiwan';
 
 // listmonk 設定（經 Cloudflare Worker 代轉，CORS origin 鎖定 coscup2026.ruby.tw）
@@ -468,6 +447,8 @@ const CROSSLANG_DEFS = {
   python:     {{ site.data.crosslang[page.lang].python | jsonify }},
   php:        {{ site.data.crosslang[page.lang].php | jsonify }},
 };
+// 選項只有一份（Ruby 程式碼與 UI 語言無關）— _data/crosslang/choices.yml
+const CROSSLANG_CHOICES = {{ site.data.crosslang.choices | jsonify }};
 
 // ── omikuji 籤池 — 從 _data/omikuji/[lang].yml 注入 ───────
 const OMIKUJI_DEFS = {{ site.data.omikuji[page.lang] | jsonify }};
@@ -534,6 +515,20 @@ function buildQuestion(def, raw) {
       `puts gem${input}`,
     ].join('\n'),
     tips: def.tips,
+  };
+}
+
+// ── crosslang 題目工廠（answer + 3 個其他選項，洗牌成 4 選 1）──
+function buildCrosslangQuestion(def, lang) {
+  const others = CROSSLANG_CHOICES[def.id] || [];
+  return {
+    type:       'crosslang',
+    sourceLang: lang,
+    code:       def.code,
+    expected:   def.expected,
+    answer:     def.answer,
+    tips:       def.tips,
+    choices:    [def.answer, ...others].sort(() => Math.random() - 0.5),
   };
 }
 
@@ -681,7 +676,7 @@ function renderCrosslangQuestion(q) {
   codeEl.textContent = q.code;
   if (window.hljs) window.hljs.highlightElement(codeEl);
 
-  document.getElementById('crosslang-input').value = '';
+  renderCrosslangChoices(q);
   document.getElementById('crosslang-feedback').style.display = 'none';
   document.getElementById('crosslang-output').innerHTML =
     `<span style="color:#4a3a48;">${UI.quiz_output_waiting}</span>`;
@@ -696,6 +691,27 @@ function renderCrosslangQuestion(q) {
       <p style="font-size:11px;color:#9b9b9b;margin:3px 0 0;">${t.desc}</p>
     </div>
   `).join('');
+}
+
+// ── crosslang 選項渲染 ────────────────────────────────────
+const CHOICE_STYLE = "display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:#fff;border:1px solid #e8d5d3;border-radius:10px;padding:14px 16px;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;";
+
+function renderCrosslangChoices(q) {
+  document.getElementById('crosslang-choices').innerHTML = q.choices.map((c, i) => `
+    <button type="button" id="cl-choice-${i}" onclick="pickCrosslang(${i})" style="${CHOICE_STYLE}"
+      onmouseover="if(!this.disabled){this.style.borderColor='#bd3f32';this.style.background='#fef6f0';}"
+      onmouseout="if(!this.disabled){this.style.borderColor='#e8d5d3';this.style.background='#fff';}">
+      <span style="flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#fef6f0;color:#bd3f32;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">${'ABCD'[i]}</span>
+      <code style="font-family:'JetBrains Mono','Courier New',monospace;font-size:13px;color:#323232;word-break:break-word;">${escHtml(c)}</code>
+    </button>
+  `).join('');
+}
+
+function lockCrosslangChoices() {
+  document.querySelectorAll('#crosslang-choices button').forEach(b => {
+    b.disabled = true;
+    b.style.cursor = 'default';
+  });
 }
 
 // ── 輸出 ──────────────────────────────────────────────────
@@ -795,14 +811,7 @@ window.selectLang = function (lang) {
   const pool    = CROSSLANG_DEFS[lang] || [];
   const shuffled = pool.slice().sort(() => Math.random() - 0.5).slice(0, CROSSLANG_COUNT);
   crosslangIds       = shuffled.map(def => def.id);
-  crosslangQuestions = shuffled.map(def => ({
-    type:       'crosslang',
-    sourceLang: lang,
-    code:       def.code,
-    expected:   def.expected,
-    answer:     def.answer,
-    tips:       def.tips,
-  }));
+  crosslangQuestions = shuffled.map(def => buildCrosslangQuestion(def, lang));
   crosslangIndex    = 0;
   crosslangAttempts = 0;
   switchPhase('crosslang');
@@ -881,66 +890,59 @@ end
   }
 };
 
-// ── 執行 Ruby (crosslang) ─────────────────────────────────
-window.runCrosslang = async function () {
+// ── 選一個選項 (crosslang) ────────────────────────────────
+// 不看「哪個是正解」—— 選項直接餵進 mruby，輸出等於 expected 就算對。
+// 所以同一題可以有兩個都對的寫法，不需要在題庫標記。
+window.pickCrosslang = async function (i) {
+  const clOut = (html) => { document.getElementById('crosslang-output').innerHTML = html; };
   if (!rubyVM) {
-    document.getElementById('crosslang-output').innerHTML =
-      `<span style="color:#febc2e;">${UI.wasm_not_ready}</span>`;
+    clOut(`<span style="color:#febc2e;">${UI.wasm_not_ready}</span>`);
     return;
   }
-  const input = document.getElementById('crosslang-input').value.trim();
-  if (!input) {
-    document.getElementById('crosslang-output').innerHTML =
-      `<span style="color:#febc2e;">${UI.wasm_no_input}</span>`;
-    return;
-  }
+  const q   = crosslangQuestions[crosslangIndex];
+  const btn = document.getElementById('cl-choice-' + i);
+  if (!q || !btn || btn.disabled) return;
 
-  const q = crosslangQuestions[crosslangIndex];
-  const code = `begin\n${input}\nrescue SyntaxError => e\n"SyntaxError: \#{e.message}"\nrescue => e\n"\#{e.class}: \#{e.message}"\nend`;
-
+  const code = `begin\n${q.choices[i]}\nrescue SyntaxError => e\n"SyntaxError: \#{e.message}"\nrescue => e\n"\#{e.class}: \#{e.message}"\nend`;
   let result;
   try {
     result = rubyVM.eval(code).toString();
   } catch (e) {
-    if (e instanceof RangeError || e.message?.includes('call stack')) {
-      try {
-        await new Promise(r => setTimeout(r, 50));
-        result = rubyVM.eval(code).toString();
-      } catch (e2) {
-        document.getElementById('crosslang-output').innerHTML =
-          `<span style="color:#f87171;">${UI.exec_error_prefix} ${escHtml(e2.message)}</span>`;
-        return;
-      }
-    } else {
-      document.getElementById('crosslang-output').innerHTML =
-        `<span style="color:#f87171;">${UI.exec_error_prefix} ${escHtml(e.message)}</span>`;
+    // 偶發的 call stack exhausted：等一拍再試一次
+    await new Promise(r => setTimeout(r, 50));
+    try {
+      result = rubyVM.eval(code).toString();
+    } catch (e2) {
+      clOut(`<span style="color:#f87171;">${UI.exec_error_prefix} ${escHtml(e2.message)}</span>`);
       return;
     }
   }
 
-  const isError = result.includes('Error:') || result.includes('SyntaxError');
-  if (isError) {
-    document.getElementById('crosslang-output').innerHTML =
-      `<span style="color:#f87171;">${escHtml(result)}</span>`;
-    return;
-  }
+  const correct = !result.includes('Error:') && result.trim() === q.expected.trim();
+  clOut(`<span style="color:${correct ? '#4ade80' : '#f87171'};">=&gt; ${escHtml(result)}</span>`);
 
-  document.getElementById('crosslang-output').innerHTML =
-    `<span style="color:#4ade80;">=&gt; ${escHtml(result)}</span>`;
-
-  if (result.trim() === q.expected.trim()) {
+  if (correct) {
+    btn.style.borderColor = '#22c55e';
+    btn.style.background  = '#f0faf4';
+    lockCrosslangChoices();
     correctCount++;
     document.getElementById('score-text').textContent = tpl(UI.quiz_score, { n: correctCount });
     showCrosslangFeedback(true);
     setTimeout(() => nextCrosslangQuestion(), 1400);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.style.opacity = '0.45';
+  btn.style.background = '#faf7f5';
+  btn.style.cursor = 'default';
+  crosslangAttempts++;
+  if (crosslangAttempts >= CROSSLANG_ATTEMPTS) {
+    lockCrosslangChoices();
+    showCrosslangAnswerReveal(q);
+    setTimeout(() => nextCrosslangQuestion(), 3000);
   } else {
-    crosslangAttempts++;
-    if (crosslangAttempts >= MAX_ATTEMPTS) {
-      showCrosslangAnswerReveal(q);
-      setTimeout(() => nextCrosslangQuestion(), 3000);
-    } else {
-      showCrosslangFeedback(false, MAX_ATTEMPTS - crosslangAttempts);
-    }
+    showCrosslangFeedback(false, CROSSLANG_ATTEMPTS - crosslangAttempts);
   }
 };
 
@@ -980,6 +982,9 @@ window.askAICrosslang = function () {
 ${UI.ai_prompt_question_label}${UI.crosslang_prompt}
 \`\`\`${q.sourceLang}
 ${q.code}
+\`\`\`
+\`\`\`ruby
+${q.choices.map((c, i) => `${'ABCD'[i]}. ${c}`).join('\n')}
 \`\`\`
 
 ${UI.ai_prompt_instruction}`;
@@ -1351,11 +1356,8 @@ async function initRuby() {
       if (restored.length === snap.clIds.length) {
         crosslangIds       = snap.clIds;
         crosslangIndex     = snap.cli ?? 0;
-        crosslangQuestions = restored.map(def => ({
-          type: 'crosslang', sourceLang: selectedLang,
-          code: def.code, expected: def.expected,
-          answer: def.answer, tips: def.tips,
-        }));
+        // ponytail: 選項會重新洗牌（順序沒存進 sessionStorage）—— reload 中途換位置無妨
+        crosslangQuestions = restored.map(def => buildCrosslangQuestion(def, selectedLang));
       } else {
         // Can't restore cleanly — fall back to lang-select
         currentPhase = 'lang-select';
@@ -1380,10 +1382,6 @@ async function initRuby() {
 
 document.getElementById('method-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') window.runRuby();
-});
-
-document.getElementById('crosslang-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') window.runCrosslang();
 });
 
 </script>

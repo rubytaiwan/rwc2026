@@ -59,7 +59,7 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
 - [ ] 刪除 listmonk 測試資料：subscriber `ryudo@5xruby.com`（id 1105，E2E 測試用）
 - [ ] 活動後輪替/移除 listmonk 的 `automation-api` API user（token 曾出現於對話）
 - [ ] 現場實測：PHP 跨語言題組、EN/JA 完整流程（SITCON 時未測完的部分）
-- 跨語言題庫每語言僅 5 題抽 3，重複率偏高；如需降低可擴充至 8–10 題
+- 跨語言題庫每語言僅 5 題抽 3，重複率偏高；如需降低可擴充至 8–10 題（新題記得在 `_data/crosslang/choices.yml` 補 3 個選項，gate 會擋）
 
 ## Common Commands
 
@@ -88,6 +88,7 @@ JEKYLL_ENV=production bundle exec jekyll build
 - `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
 - `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
+- `_data/crosslang/choices.yml` — 跨語言題的其餘 3 個選項（Ruby 程式碼與 UI 語言無關，只有一份）
 - `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, `mruby.js`(emscripten glue) and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
 - `_includes/mruby-prelude.rb` — Ruby prelude eval'd at boot; supplies the `require` no-op, `StringIO`, `STDOUT`/`$stdout` and `Kernel#puts` that mruby lacks. **It is inlined into JS via ``String.raw`{% include %}` `` — no backticks or `${` allowed in that file** (`tools/mruby-wasm/spike.mjs` guards this).
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
@@ -110,7 +111,13 @@ JEKYLL_ENV=production bundle exec jekyll build
 
 1. **quiz** — 5 standard questions in difficulty gradient (2 easy → 2 medium → 1 hard), drawn from `_data/tasks/<lang>.yml`. Max 3 attempts per question; reveals answer on failure. The variable shown to players is named `gem`.
 2. **lang-select** — player picks their primary language (JavaScript / Python / PHP).
-3. **crosslang** — 3 cross-language questions from `_data/crosslang/<lang>/<source>.yml`: familiar source-language code shown, player writes the Ruby equivalent (highlight.js syntax highlighting).
+3. **crosslang** — 3 cross-language questions from `_data/crosslang/<lang>/<source>.yml`: familiar source-language
+   code shown (highlight.js), player **picks** the Ruby equivalent from 4 options（2026-08-04 從自由輸入改成 4 選 1 ——
+   原本要打的表達式太長，攤位現場沒人想在手機上輸入 `.split.map(&:capitalize).join(" ")`）。
+   - 選項 = 該題 `answer` + `choices.yml` 裡的 3 個，渲染時洗牌
+   - 判定**不看標記**：點下去的選項直接丟進 mruby 跑，輸出等於 `expected` 就算對。所以同一題可以有兩個都對的寫法，
+     題庫不需要多一個欄位；有 6 題刻意這樣設計（`reduce(:+)`、`reject(&:even?)`、`Array#*` 當 join 之類有教學價值的替代寫法）
+   - 機會 2 次（`CROSSLANG_ATTEMPTS`），不是 quiz 的 3 次 —— 4 選 1 給 3 次等於亂猜就過
 4. **result** — HTML Canvas 1080×1080 scorecard with logo; Web Share API for IG sharing (falls back to download).
 5. **form** — Collects name, email, phone, school; POSTs to the Cloudflare Worker (`listmonk_submit_url`). Failure is non-blocking.
 6. **proof** — Completion certificate with QR code, proof code (`RUBY-{score:02d}-{hash8}`), shimmer animation, live clock.
