@@ -39,6 +39,7 @@ var worker_default = {
           score: a.score ?? 0,
           total: a.total ?? 10
         },
+        lists: [LISTMONK_LIST_ID],
         preconfirm_subscriptions: true
       })
     });
@@ -55,17 +56,6 @@ var worker_default = {
       try {
         subscriberId = JSON.parse(text).data?.results?.[0]?.id;
       } catch { /* 非 JSON，交給 lookup.body 回報 */ }
-      if (!subscriberId) {
-        return new Response(JSON.stringify({
-          mailed: false,
-          create_status: createResp.status,
-          create_body: createData,
-          lookup
-        }), {
-          status: createResp.status,
-          headers: { ...CORS, "Content-Type": "application/json" }
-        });
-      }
     }
     // 這兩步以前是 fire-and-forget，寄信失敗時完全無跡可尋（worker 照樣回 200）。
     // 現在把 status/body 帶回去，前端 console 就看得到。
@@ -74,15 +64,20 @@ var worker_default = {
       const text = await resp.text();
       return { label, ok: resp.ok, status: resp.status, body: text.slice(0, 300) };
     };
-    const listResult = await step("subscribers/lists", `${LISTMONK_BASE}/subscribers/lists`, {
-      method: "PUT",
-      body: JSON.stringify({
-        ids: [subscriberId],
-        action: "add",
-        target_list_ids: [LISTMONK_LIST_ID],
-        status: "confirmed"
+    // 沒有 id 就跳過（API user 若少了 subscribers:sql_query，email 已存在時查不回 id）。
+    // create 已經帶 lists，所以新 subscriber 不靠這一步也會進名單。
+    const listResult = subscriberId
+      ? await step("subscribers/lists", `${LISTMONK_BASE}/subscribers/lists`, {
+        method: "PUT",
+        body: JSON.stringify({
+          ids: [subscriberId],
+          action: "add",
+          target_list_ids: [LISTMONK_LIST_ID],
+          status: "confirmed"
+        })
       })
-    });
+      : { label: "subscribers/lists", ok: true, status: 0, body: "skipped: no subscriber id" };
+    // tx 只吃 email，不需要 id —— 所以上面查不到 id 也照樣寄得出去
     const txResult = await step("tx", `${LISTMONK_BASE}/tx`, {
       method: "POST",
       body: JSON.stringify({
