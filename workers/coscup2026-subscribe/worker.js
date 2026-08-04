@@ -44,15 +44,24 @@ var worker_default = {
     });
     const createData = await createResp.json();
     let subscriberId = createData.data?.id;
+    let lookup = null;
     if (!subscriberId) {
       // 建立失敗（多半是 409 email 已存在）→ 查回既有 subscriber，讓重複填表也能寄信
       const email = String(body.email || "").toLowerCase().replace(/'/g, "''");
       const query = encodeURIComponent(`subscribers.email='${email}'`);
       const lookupResp = await fetch(`${LISTMONK_BASE}/subscribers?query=${query}`, { headers });
-      const lookupData = await lookupResp.json();
-      subscriberId = lookupData.data?.results?.[0]?.id;
+      const text = await lookupResp.text();
+      lookup = { status: lookupResp.status, body: text.slice(0, 400) };
+      try {
+        subscriberId = JSON.parse(text).data?.results?.[0]?.id;
+      } catch { /* 非 JSON，交給 lookup.body 回報 */ }
       if (!subscriberId) {
-        return new Response(JSON.stringify(createData), {
+        return new Response(JSON.stringify({
+          mailed: false,
+          create_status: createResp.status,
+          create_body: createData,
+          lookup
+        }), {
           status: createResp.status,
           headers: { ...CORS, "Content-Type": "application/json" }
         });
@@ -85,6 +94,7 @@ var worker_default = {
       subscriber_id: subscriberId,
       created: !!createData.data?.id,
       mailed: txResult.ok,
+      lookup,
       steps: [listResult, txResult]
     }), {
       status: 200,
