@@ -9,7 +9,7 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
 > **引擎是 C mruby 4.0 編出來的 wasm**（441 KB gzip），2026-08-04 從 CRuby `ruby.wasm`
 > （4.8 MB gzip）換過來（PR #3）。這是刻意的實驗：攤位本身就是實驗性專案。
 > 要回 CRuby 就 revert 那個 merge —— `ruby.wasm` 與 `browser.umd.js` 還在 git history 裡
-> （commit `42034c2`），`_includes/challenge-body.html` 的 `initRuby()` 也會一併還原。
+> （commit `42034c2`），`assets/js/challenge.js` 的 `initRuby()` 也會一併還原。
 
 ## Current Status（2026-08-02）
 
@@ -85,12 +85,13 @@ JEKYLL_ENV=production bundle exec jekyll build
 
 - `_config.yml` — site-wide settings; also holds `listmonk_list_uuid` for the subscription API
 - `index.html` / `en/index.html` / `ja/index.html` — language entry points (each sets `lang:` front matter and includes `challenge-body.html`)
-- `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
+- `_includes/challenge-body.html` — 頁面 HTML（6 個 phase 的 markup，i18n 走 `{{ t.xxx }}`）+ 尾端的 `#challenge-config` data island。**這裡已經沒有任何 JS 邏輯**
+- `assets/js/challenge.js` — 全部遊戲邏輯（~970 行）。**純 JS，不經過 Liquid**，Jekyll 只是原樣複製；需要 Jekyll 的東西全部從 data island 讀（見下方 Data Island 一節）
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
 - `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
 - `_data/crosslang/choices.yml` — 跨語言題的其餘 3 個選項（Ruby 程式碼與 UI 語言無關，只有一份）
-- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, `mruby.js`(emscripten glue) and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
-- `_includes/mruby-prelude.rb` — Ruby prelude eval'd at boot; supplies the `require` no-op, `StringIO`, `STDOUT`/`$stdout` and `Kernel#puts` that mruby lacks. **It is inlined into JS via ``String.raw`{% include %}` `` — no backticks or `${` allowed in that file** (`tools/mruby-wasm/spike.mjs` guards this).
+- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, `mruby.js`(emscripten glue) and highlight.js. All `<head>` scripts use `defer`; this is safe because `challenge.js` is loaded as an external `type="module"` (also deferred) at the end of `challenge-body.html`, so it executes after them in document order.
+- `_includes/mruby-prelude.rb` — Ruby prelude eval'd at boot; supplies the `require` no-op, `StringIO`, `STDOUT`/`$stdout` and `Kernel#puts` that mruby lacks. 走 Liquid `capture` + `jsonify` 進 data island 的 `prelude` 欄位，escape 由 jsonify 負責 —— 反引號與 `${` 都可以自由使用（2026-08-04 之前是 `String.raw` 內嵌，當時不行）。
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
 - `_includes/cover-styles.html` — CSS for the cover section
 - `tools/mruby-wasm/` — how the wasm is produced: `build.sh`（mise emsdk，無需 docker）、`build_config.rb`、`glue.c`、`spike.mjs`（把整份題庫餵進 VM 的 gate）
@@ -102,12 +103,13 @@ JEKYLL_ENV=production bundle exec jekyll build
   - Onigmo 有兩個建置坑，已在 `build_config.rb` / `build.sh` 處理：`conf.host_target = 'i686-pc-linux-gnu'`（Onigmo 6.2.0 的 `config.sub` 不認得 wasm），以及用 `emar` 從 `.o` 重打包 `libonigmo.a`（libtool 產出的是 96 bytes 空殼）。
   - 重建：`sh tools/mruby-wasm/build.sh`，驗證：`node tools/mruby-wasm/spike.mjs`
   - 沒有 stdlib、沒有 `Encoding` class；真的需要完整 CRuby 語意就 revert PR #3（`ruby.wasm` 17.2MB raw / 4.8MB gzip 還在 git history 的 commit `42034c2`）
+- `assets/js/challenge.js` — 遊戲邏輯（39.9KB raw / 11.4KB gzip），純靜態 ESM。以前內嵌在 HTML 裡每次重下，現在進瀏覽器快取
 - `assets/js/qrcode.min.js` — `qrcode-generator` UMD bundle; exposes `window.qrcode(typeNumber, errorLevel)`
 - `assets/images/rubytw_logo.png` — Ruby Taiwan logo (used in Canvas scorecard)
 
-### Challenge Game Flow (index.html)
+### Challenge Game Flow (`assets/js/challenge.js`)
 
-6-phase single-page flow, controlled by `switchPhase(name)`:
+6-phase single-page flow, controlled by `switchPhase(name)`（markup 在 `_includes/challenge-body.html`）:
 
 1. **quiz** — 5 standard questions in difficulty gradient (2 easy → 2 medium → 1 hard), drawn from `_data/tasks/<lang>.yml`. Max 3 attempts per question; reveals answer on failure. The variable shown to players is named `gem`.
 2. **lang-select** — player picks their primary language (JavaScript / Python / PHP).
@@ -141,7 +143,8 @@ Three languages: `zh-TW` (default), `en`, `ja`. Each has:
 - `_data/tasks/<lang>.yml` — translated task bank
 - `<lang>/index.html` (or root `index.html` for zh-TW) — sets `lang:` front matter, includes `challenge-body.html`
 
-`challenge-body.html` reads `{% assign t = site.data.locales[page.lang] %}` for all UI text.
+`challenge-body.html` 的 HTML 用 `{% assign t = site.data.locales[page.lang] %}`；`challenge.js` 的
+UI 字串走 data island 的 `ui` 欄位（同一份 YAML），在 JS 裡是 `UI.<key>`，插值用 `tpl(UI.key, { n: 1 })`。
 
 ### listmonk Integration
 
@@ -159,6 +162,32 @@ Tailwind CSS v4 via `tailwindcss-ruby` gem and a Jekyll `post_write` hook.
 
 Tailwind v4 has no `tailwind.config.js`; all config lives in `_css/input.css`.
 
-## Liquid / JS Template Gotcha
+## Data Island（JS ↔ Jekyll 的唯一介面）
 
-Jekyll processes `{{ }}` inside `<script>` blocks. Use `{secret}` (single braces) as JS/YAML placeholders that Liquid won't touch. Only use `{{ }}` for intentional Jekyll injections (e.g. `{{ site.data.tasks | jsonify }}`).
+2026-08-04 起 JS 從 HTML 抽出來了：`assets/js/challenge.js` 是**零 Liquid 的靜態 ESM**
+（Jekyll 只是原樣複製它），所有需要 Jekyll 才拿得到的東西都經由 `challenge-body.html`
+尾端的 data island 傳遞：
+
+```liquid
+{% capture prelude %}{% include mruby-prelude.rb %}{% endcapture %}
+<script id="challenge-config" type="application/json">
+{ "lang": …, "ui": …, "tasks": …, "crosslang": {…}, "choices": …, "omikuji": …,
+  "submitUrl": …, "listUuid": …, "logoUrl": …, "wasmUrl": …, "prelude": … }
+</script>
+<script type="module" src="…/challenge.js?v={{ site.time | date: '%s' }}"></script>
+```
+
+`challenge.js` 檔頭 `JSON.parse` 它，還原成 `UI` / `PAGE_LANG` / `TASK_DEFS` / `CROSSLANG_DEFS`
+/ `CROSSLANG_CHOICES` / `OMIKUJI_DEFS` / `SUBMIT_URL` / `LISTMONK_LIST_UUID` / `LOGO_URL`
+/ `WASM_URL` / `PRELUDE`。要加新的注入值就在這兩邊各加一行。
+
+三個規矩：
+
+1. **`challenge.js` 裡不要放 Liquid** —— 它不會被處理，只會變成語法錯誤。反過來說，backtick、
+   `${}`、`{{`、`{%` 在那個檔案裡都是安全的。
+2. **每個 `jsonify` 後面要接 `| replace: '</', '<\/'`**。locale 裡有 HTML（`result_tag_reminder`
+   的 `<strong>`），萬一哪天出現 `</script` 會直接把 data island 切斷。`<\/` 是合法 JSON escape。
+3. **HTML 部分照舊**：`{{ t.xxx }}` 只在 `challenge-body.html` 的 markup 用；`_data/tasks/*.yml`
+   的 `question` 仍用 `{secret}` 單大括號（Liquid 不碰單大括號）。
+
+`?v={{ site.time | date: '%s' }}` 是 build 時間當版號，避免現場 deploy 後訪客拿到快取裡的舊 JS。

@@ -4,7 +4,7 @@
  * mrbjs_eval() 一律回傳字串（malloc'd，JS 端負責 _free）：
  *   - 正常求值 → 結果的 to_s
  *   - 例外逃出（SyntaxError 等 Ruby 端 rescue 接不到的）→ "ClassName: message"
- * 這樣 challenge-body.html 的 `result.includes('Error:')` sniff 不需要改。
+ * 這樣 challenge.js 的 `result.includes('Error:')` sniff 不需要改。
  */
 #include <string.h>
 #include <mruby.h>
