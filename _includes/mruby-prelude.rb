@@ -37,7 +37,8 @@ class StringIO
     end
     a.each do |x|
       if x.is_a?(Array)
-        x.empty? ? (@s << "\n") : puts(*x)
+        # CRuby: puts [] 什麼都不印（puts 無參數才印換行）
+        puts(*x) unless x.empty?
       else
         s = x.nil? ? "" : x.to_s
         @s << s
