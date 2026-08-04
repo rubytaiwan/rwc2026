@@ -1,11 +1,11 @@
-# 開機時 eval 一次，補上 mruby 沒有但 challenge-body.html 需要的東西。
+# 開機時 eval 一次，補上 mruby 沒有但 challenge.js 需要的東西。
 # 放檔案而不是編進 glue.c，改這裡不用重建 wasm。
 #
-# ⚠️ 這個檔案會被 challenge-body.html 用 String.raw + Liquid include 內嵌進 JS template literal，
-#    所以整份檔案不能出現反引號，也不能出現 dollar-brace，否則 literal 會提早結束、
-#    頁面整段 JS 直接掛掉。tools/mruby-wasm/spike.mjs 會擋這件事。
+# challenge-body.html 用 Liquid capture + jsonify 把整份檔案塞進 #challenge-config
+# data island 的 "prelude" 欄位，escape 由 jsonify 負責 —— 反引號與 dollar-brace
+# 都可以自由使用（2026-08 之前是 String.raw 內嵌，當時不行）。
 #
-# 這樣一來 challenge-body.html 的兩個 stdout 攔截 wrapper（runRuby / computeAllExpected）
+# 這樣一來 challenge.js 的兩個 stdout 攔截 wrapper（runRuby / computeAllExpected）
 # 可以一字不改地在 mruby 上跑：require 'stringio' 被吃掉、$stdout = StringIO.new 有類別可用、
 # ensure $stdout = STDOUT 有常數可指。
 

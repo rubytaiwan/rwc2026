@@ -2,7 +2,7 @@
 //
 //   node tools/mruby-wasm/spike.mjs
 //
-// 題庫從 _data/ 讀，wrapper 與 literal 組法照抄 _includes/challenge-body.html
+// 題庫從 _data/ 讀，wrapper 與 literal 組法照抄 assets/js/challenge.js
 // （toRubyLit / buildQuestion / rubyCode / computeAllExpected / runCrosslang）。
 // exit code 0 = 全綠。
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -67,15 +67,12 @@ function ev(src) {
   Module._free(p);
   return out;
 }
-// prelude 與頁面共用同一份（頁面用 String.raw`{% include %}` 內嵌）
+// prelude 與頁面共用同一份（頁面用 Liquid capture + jsonify 送進 data island，
+// escape 由 jsonify 負責，所以這裡不需要再擋反引號 / dollar-brace）
 const preludeSrc = readFileSync(join(ROOT, '_includes/mruby-prelude.rb'), 'utf8');
-if (/[`]|\$\{/.test(preludeSrc)) {
-  console.log('  FAIL prelude 含反引號或 ${ —— 內嵌進 JS template literal 會炸掉整頁');
-  process.exit(1);
-}
 ev(preludeSrc);
 
-// ── wrapper：與 challenge-body.html 逐字相同 ───────────────
+// ── wrapper：與 challenge.js 逐字相同 ───────────────
 const quizWrapper = (rubyCode) => `
 require 'stringio'
 $stdout = StringIO.new
