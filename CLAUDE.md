@@ -34,6 +34,17 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
 
 ### 待辦 / 注意事項
 
+- [ ] **🔴 完成通知信目前寄不出去**（2026-08-04 實測）：listmonk API user `coscup2026-booth`
+      的角色缺 **`tx:send`** 與 **`subscribers:sql_query`** 兩個權限，`POST /api/tx` 回
+      `403 permission denied: tx:send`。要在 listmonk 後台 **Admin → Users → Roles**
+      把這兩項加進 `coscup2026-booth` 所屬的角色。加完用這個指令複驗（`mailed` 要是 `true`）：
+      ```sh
+      curl -s -X POST https://coscup2026-subscribe.contact-db4.workers.dev \
+        -H 'Content-Type: application/json' \
+        -d '{"email":"you@example.com","name":"test","attribs":{"score":8,"total":8}}'
+      ```
+      Worker 現在會把 `{ mailed, lookup, steps[] }` 回給前端，前端在失敗時 `console.warn`，
+      所以現場可以直接從 DevTools 判斷是哪一步掛掉。
 - [ ] Template 6 內的取消訂閱連結 `edm.ruby.tw/subscription/manage?uuid=…` 端點尚未建置（目前 404，屬預期，後續會補）
 - [ ] 舊 repo PR #2：留言說明遷移至本 repo 後關閉
 - [ ] 刪除 listmonk 測試資料：subscriber `ryudo@5xruby.com`（id 1105，E2E 測試用）
