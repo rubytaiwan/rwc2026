@@ -29,22 +29,11 @@ class StringIO
     c
   end
 
-  # CRuby Kernel#puts 語意：陣列展開逐行、已有換行不再補、無參數只換行。
+  # CRuby Kernel#puts 語意：陣列遞迴展開逐行、已有換行不再補、無參數只換行、
+  # 空陣列什麼都不印（flatten 順便處理掉巢狀與空陣列兩件事）。
   def puts(*a)
-    if a.empty?
-      @s << "\n"
-      return nil
-    end
-    a.each do |x|
-      if x.is_a?(Array)
-        # CRuby: puts [] 什麼都不印（puts 無參數才印換行）
-        puts(*x) unless x.empty?
-      else
-        s = x.nil? ? "" : x.to_s
-        @s << s
-        @s << "\n" unless s.end_with?("\n")
-      end
-    end
+    return write("\n") if a.empty?
+    a.flatten.each { |x| s = x.to_s; write(s.end_with?("\n") ? s : s + "\n") }
     nil
   end
 
