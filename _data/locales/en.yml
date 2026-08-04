@@ -17,11 +17,11 @@ quiz_loading: "Loading…"
 quiz_input_placeholder: ".method_name"
 quiz_run_btn: "▶ Run Ruby"
 quiz_ask_ai_btn: "✨ Ask AI"
-quiz_wasm_status_init: "⏳ Loading Ruby WASM…"
+quiz_wasm_status_init: "⏳ Loading mruby WASM…"
 quiz_tips_title: "Ruby Tips"
 quiz_powered_by: "POWERED BY"
-quiz_powered_by_name: "Ruby WASM"
-quiz_powered_by_desc: "Real Ruby 4.0 running in your browser"
+quiz_powered_by_name: "mruby WASM"
+quiz_powered_by_desc: "Real mruby 4.0 running in your browser"
 quiz_output_waiting: "Waiting for output…"
 
 # ── Quiz Phase (JS dynamic) ──
@@ -33,13 +33,13 @@ diff_medium: "Medium"
 diff_hard: "Hard"
 ask_ai_opening: "✅ Opening…"
 
-# ── Ruby WASM Status (JS) ──
-wasm_step1: "⏳ Loading Ruby 4.0 (1/2)…"
-wasm_step1_fallback: "⏳ Loading Ruby 4.0 (fallback)…"
-wasm_step2: "⏳ Initializing Ruby VM (2/2)…"
-wasm_ready: "✅ Ruby 4.0 Ready"
+# ── mruby WASM Status (JS) ──
+wasm_step1: "⏳ Loading mruby 4.0 (1/2)…"
+wasm_step1_fallback: "⏳ Loading mruby 4.0 (fallback)…"
+wasm_step2: "⏳ Initializing mruby VM (2/2)…"
+wasm_ready: "✅ mruby 4.0 Ready"
 wasm_error_prefix: "❌ Load failed:"
-wasm_not_ready: "⏳ Ruby WASM not ready yet, please wait…"
+wasm_not_ready: "⏳ mruby WASM not ready yet, please wait…"
 wasm_no_input: "⚠️ Please enter a Ruby method first!"
 exec_error_prefix: "Error:"
 
@@ -95,7 +95,7 @@ proof_show_staff: "🎁 Show this screen to booth staff"
 proof_show_staff_sub: "Complete the booth activity and claim your gift"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by mruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "I'm learning Ruby and have a practice problem. Please help me using the \"Guided Learning\" approach — don't give me the answer directly, but guide me through questions and progressive hints so I can find the solution myself."

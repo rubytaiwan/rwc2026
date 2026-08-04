@@ -44,23 +44,33 @@ Phase 5：完成證明
 |------|------|
 | [Jekyll 4.4](https://jekyllrb.com/) | 靜態網站產生器 |
 | [Tailwind CSS v4](https://tailwindcss.com/) | 樣式（via `tailwindcss-ruby` gem）|
-| [Ruby WASM](https://github.com/ruby/ruby.wasm) | 在瀏覽器中執行真實 Ruby 4.0（`ruby.wasm`，無 stdlib）|
+| [mruby](https://github.com/mruby/mruby) | 在瀏覽器中執行 mruby 4.0（C mruby → WebAssembly，含 parser）|
 | [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) | QR Code 產生 |
 | [highlight.js](https://highlightjs.org/) | 跨語言題的語法上色 |
 | [listmonk](https://listmonk.app/) | 電子報訂閱後台 |
 | HTML Canvas API | 成績單圖片繪製 |
 | Web Share API | 手機原生分享至 Instagram |
 
-### 頁面重量
+### 頁面重量（本分支：`exp/mruby-wasm`）
 
-首次載入約 **4.8 MB**（gzip），其中 4.8 MB 全是 `ruby.wasm`；所有 JS 加起來約 100 KB。
-攤位現場每位訪客都要拉一份 wasm，所以任何瘦身都該從這個檔案下手 —— bundler 的
-tree-shaking 動不到它，最佳情況也只省全站 0.4%，故本專案不使用 Vite/esbuild。
+> ⚠️ 這是**實驗分支**：把引擎從 CRuby 換成 C mruby。`main` 仍是 CRuby，線上部署未受影響。
 
-改用不含 stdlib 的 `ruby.wasm`（17.2 MB raw）而非 `ruby+stdlib.wasm`（32.5 MB raw）：
-題庫答案與御神籤只用 core Ruby，輸出攔截用的 `StringIO` 是編進 binary 的 built-in
-extension，不需要 stdlib。若日後有題目答案需要 `require` 真正的 stdlib，改回
-`ruby+stdlib.wasm` 並同步 `_includes/challenge-body.html` 的 `wasmUrl`。
+首次載入約 **0.37 MB**（gzip），其中 wasm 只佔 265 KB。
+
+| | raw | gzip |
+|---|---|---|
+| `mruby.wasm`（本分支） | 794 KB | **265 KB** |
+| `mruby.js`（emscripten glue） | 11 KB | 4 KB |
+| `ruby.wasm`（`main`，CRuby 無 stdlib） | 17.2 MB | 4.8 MB |
+
+**18× 的差距**，且 VM 啟動（instantiate + `mrb_open` + prelude + 5 題預先求值）實測 **22 ms**。
+
+代價：mruby 沒有 stdlib、沒有 `Encoding` class（UTF-8 靠 `MRB_UTF8_STRING` 編譯選項）、
+Integer 靠 `mruby-bigint` 才有大數。題庫 27 個 answer 全部驗證過（`node tools/mruby-wasm/spike.mjs`）。
+需要完整 CRuby 語意就回 `main`。
+
+wasm 的重建方式與 gate 測試都放在 `tools/mruby-wasm/`（用 mise 的 emsdk，不需要 docker）。
+bundler 的 tree-shaking 對這條路線同樣無效 —— 所有 JS 加起來約 100 KB，故本專案不使用 Vite/esbuild。
 
 ---
 

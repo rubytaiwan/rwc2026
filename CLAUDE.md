@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and Ruby 4.0 WebAssembly for in-browser Ruby execution.
+Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and WebAssembly for in-browser Ruby execution.
+
+> **本分支（`exp/mruby-wasm`）是實驗分支**：引擎換成 C mruby 4.0 編出來的 wasm（265 KB gzip），取代 `main` 的 CRuby `ruby.wasm`（4.8 MB gzip）。`main` 仍是 CRuby，線上部署未受影響。
 
 ## Current Status（2026-08-02）
 
@@ -62,14 +64,18 @@ JEKYLL_ENV=production bundle exec jekyll build
 - `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
 - `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
-- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, ruby-wasm browser.umd.js and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
+- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, `mruby.js`(emscripten glue) and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
+- `_includes/mruby-prelude.rb` — Ruby prelude eval'd at boot; supplies the `require` no-op, `StringIO`, `STDOUT`/`$stdout` and `Kernel#puts` that mruby lacks. **It is inlined into JS via ``String.raw`{% include %}` `` — no backticks or `${` allowed in that file** (`tools/mruby-wasm/spike.mjs` guards this).
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
 - `_includes/cover-styles.html` — CSS for the cover section
+- `tools/mruby-wasm/` — how the wasm is produced: `build.sh`（mise emsdk，無需 docker）、`build_config.rb`、`glue.c`、`spike.mjs`（把整份題庫餵進 VM 的 gate）
 
 ### Assets
 
-- `assets/ruby-wasm/browser.umd.js` — Ruby 4.0 WASM JS bridge (`@ruby/4.0-wasm-wasi@2.8.1`); exposes `window["ruby-wasm-wasi"]`
-- `assets/ruby-wasm/ruby.wasm` — Ruby 4.0 WASM binary, **stdlib-less** build (17.2MB raw / 4.8MB gzip). This is ~99% of the page's transfer weight. Task answers and omikuji only use core Ruby; `StringIO` (used to capture stdout in `computeAllExpected()`) is a built-in extension, not a stdlib `.rb`, so it still `require`s fine. If a task answer ever needs real stdlib, swap back to `ruby+stdlib.wasm` (32.5MB) and update `wasmUrl` in `_includes/challenge-body.html`.
+- `assets/ruby-wasm/mruby.js` — emscripten glue（11.3KB raw / 4KB gzip）；定義 `window.createMruby`，用 `locateFile` 指到 `mruby.wasm`
+- `assets/ruby-wasm/mruby.wasm` — C mruby 4.0.0 build（794KB raw / **265KB gzip**），含 parser（`mruby-compiler`）所以能 eval 玩家輸入的任意字串。gembox：`stdlib` + random/sprintf/metaprog/bigint/encoding/compiler，**不含 mruby-io**（prelude 自己做 stdout）。編譯開 `MRB_UTF8_STRING`。
+  - 重建：`sh tools/mruby-wasm/build.sh`，驗證：`node tools/mruby-wasm/spike.mjs`
+  - 沒有 stdlib、沒有 `Encoding` class；真的需要完整 CRuby 語意就回 `main`（17.2MB raw / 4.8MB gzip 的 `ruby.wasm`）
 - `assets/js/qrcode.min.js` — `qrcode-generator` UMD bundle; exposes `window.qrcode(typeNumber, errorLevel)`
 - `assets/images/rubytw_logo.png` — Ruby Taiwan logo (used in Canvas scorecard)
 
@@ -94,7 +100,7 @@ Each task has:
 - `answer` — the Ruby method/operator (e.g. `.next`, `* 2`)
 - `tips` — array of `{ code, desc }` hint items
 
-Answer verification uses Ruby WASM: after the VM loads, `computeAllExpected()` runs each question's correct answer through `rubyVM.eval` and stores the output in `q.expected`. Non-deterministic methods (`.shuffle`, `.sample`) use a per-question `srand(seed)` to ensure reproducibility. **No `EXPECTED_MAP` or JS reimplementation of Ruby methods needed — any valid Ruby expression can be an `answer`.**
+Answer verification uses the wasm VM: after it loads, `computeAllExpected()` runs each question's correct answer through `rubyVM.eval` and stores the output in `q.expected`. (`rubyVM` 在本分支是包住 `mrbjs_eval` 的 6 行 shim，介面與 ruby.wasm 的 VM 相同：`eval(src).toString()`。) Non-deterministic methods (`.shuffle`, `.sample`) use a per-question `srand(seed)` to ensure reproducibility. **No `EXPECTED_MAP` or JS reimplementation of Ruby methods needed — any valid Ruby expression can be an `answer`.**
 
 ### i18n
 

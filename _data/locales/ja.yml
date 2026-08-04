@@ -17,11 +17,11 @@ quiz_loading: "読み込み中…"
 quiz_input_placeholder: ".メソッド名"
 quiz_run_btn: "▶ Ruby を実行"
 quiz_ask_ai_btn: "✨ AI に聞く"
-quiz_wasm_status_init: "⏳ Ruby WASM 読み込み中…"
+quiz_wasm_status_init: "⏳ mruby WASM 読み込み中…"
 quiz_tips_title: "Ruby のヒント"
 quiz_powered_by: "POWERED BY"
-quiz_powered_by_name: "Ruby WASM"
-quiz_powered_by_desc: "本物の Ruby 4.0 がブラウザで動く"
+quiz_powered_by_name: "mruby WASM"
+quiz_powered_by_desc: "本物の mruby 4.0 がブラウザで動く"
 quiz_output_waiting: "実行待ち…"
 
 # ── Quiz Phase (JS dynamic) ──
@@ -33,13 +33,13 @@ diff_medium: "Medium"
 diff_hard: "Hard"
 ask_ai_opening: "✅ 開いています…"
 
-# ── Ruby WASM Status (JS) ──
-wasm_step1: "⏳ Ruby 4.0 を読み込み中 (1/2)…"
-wasm_step1_fallback: "⏳ Ruby 4.0 を読み込み中 (fallback)…"
-wasm_step2: "⏳ Ruby VM を初期化中 (2/2)…"
-wasm_ready: "✅ Ruby 4.0 準備完了"
+# ── mruby WASM Status (JS) ──
+wasm_step1: "⏳ mruby 4.0 を読み込み中 (1/2)…"
+wasm_step1_fallback: "⏳ mruby 4.0 を読み込み中 (fallback)…"
+wasm_step2: "⏳ mruby VM を初期化中 (2/2)…"
+wasm_ready: "✅ mruby 4.0 準備完了"
 wasm_error_prefix: "❌ 読み込み失敗:"
-wasm_not_ready: "⏳ Ruby WASM はまだ準備中です、少々お待ちください…"
+wasm_not_ready: "⏳ mruby WASM はまだ準備中です、少々お待ちください…"
 wasm_no_input: "⚠️ 先に Ruby メソッドを入力してください！"
 exec_error_prefix: "実行エラー:"
 
@@ -95,7 +95,7 @@ proof_show_staff: "🎁 この画面をスタッフに見せてください"
 proof_show_staff_sub: "ブースアクティビティを完了してギフトをもらおう"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by mruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "Rubyを学んでいます。練習問題があります。「ガイド付き学習（Guided Learning）」の方法で助けてください。答えを直接教えずに、質問と段階的なヒントで自分で解法を見つけられるよう導いてください。"
