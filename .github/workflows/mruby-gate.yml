@@ -1,0 +1,36 @@
+name: mruby gate
+
+# 守住「committed 的 mruby.wasm 跑得動整份題庫」這件事。
+# 新增題目、改 prelude、換 wasm 都會觸發；只需要 node，幾秒鐘。
+on:
+  pull_request:
+    paths:
+      - '_data/tasks/**'
+      - '_data/crosslang/**'
+      - '_includes/mruby-prelude.rb'
+      - 'assets/ruby-wasm/**'
+      - 'tools/mruby-wasm/**'
+      - '.github/workflows/mruby-gate.yml'
+  push:
+    branches: [main, 'exp/**']
+    paths:
+      - '_data/tasks/**'
+      - '_data/crosslang/**'
+      - '_includes/mruby-prelude.rb'
+      - 'assets/ruby-wasm/**'
+      - 'tools/mruby-wasm/**'
+  workflow_dispatch:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # 15 個 quiz answer + 45 個 crosslang answer 全部丟進 VM 跑，
+      # 逐字元比對 YAML 的 expected；另檢查 srand 決定性、UTF-8、gzip 體積。
+      - run: node tools/mruby-wasm/spike.mjs
