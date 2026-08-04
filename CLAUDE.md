@@ -45,10 +45,15 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
         -H 'Content-Type: application/json' \
         -d '{"email":"you@example.com","name":"test","attribs":{"score":8,"total":8}}'
       ```
-- [ ] role 仍缺 **`subscribers:get_all`**：email 已存在時 lookup 回 200 但 `total: 0`
-      （listmonk 沒這個權限就把 subscriber 查詢限縮在有 list role 的範圍；`lists:manage_all`
-      不等於能跨名單查 subscriber）。後果只有一項 —— 重複填表的人寄得到信，但不會被補進
-      名單 11。補勾就好，或把 worker 裡那段 lookup 拿掉。
+      role **Booth Subscriber API** 最終需要的四項：`subscribers:manage`（建立）、
+      `subscribers:get_all` + `subscribers:sql_query`（用 email 查回既有 subscriber，
+      少了 `get_all` 會回 200 但 `total: 0`）、`tx:send`（寄信）。`lists:manage_all`
+      是管名單本身，不等於能跨名單查 subscriber。
+- 已知限制：email 已存在時 create 撞 409，worker **不會**更新既有 subscriber 的
+  name/attribs（例如 SITCON 時期建的 id 934 仍是 `score: 0 / total: 10`），所以回頭客
+  這次填的 score/school/phone 不會被記下來。刻意不修 —— listmonk 的
+  `PUT /api/subscribers/:id` 是整筆取代，`lists` 給錯會把人從其他名單踢掉，
+  不值得為分析用的 attribs 冒這個風險。
 - [ ] Template 6 內的取消訂閱連結 `edm.ruby.tw/subscription/manage?uuid=…` 端點尚未建置（目前 404，屬預期，後續會補）
 - [ ] 舊 repo PR #2：留言說明遷移至本 repo 後關閉
 - [ ] 刪除 listmonk 測試資料：subscriber `ryudo@5xruby.com`（id 1105，E2E 測試用）
