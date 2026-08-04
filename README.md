@@ -55,19 +55,23 @@ Phase 5：完成證明
 
 > ⚠️ 這是**實驗分支**：把引擎從 CRuby 換成 C mruby。`main` 仍是 CRuby，線上部署未受影響。
 
-首次載入約 **0.37 MB**（gzip），其中 wasm 只佔 265 KB。
+首次載入約 **0.37 MB**（gzip），其中 wasm 只佔 301 KB。
 
 | | raw | gzip |
 |---|---|---|
-| `mruby.wasm`（本分支） | 794 KB | **265 KB** |
-| `mruby.js`（emscripten glue） | 11 KB | 4 KB |
+| `mruby.wasm`（本分支） | 870 KB | **301 KB** |
+| `mruby.js`（emscripten glue） | 16 KB | 5 KB |
 | `ruby.wasm`（`main`，CRuby 無 stdlib） | 17.2 MB | 4.8 MB |
 
-**18× 的差距**，且 VM 啟動（instantiate + `mrb_open` + prelude + 5 題預先求值）實測 **22 ms**。
+**16× 的差距**，且 VM 啟動（instantiate + `mrb_open` + prelude + 5 題預先求值）實測 **22 ms**
+（CRuby 版同機同法 201 ms）。
 
 代價：mruby 沒有 stdlib、沒有 `Encoding` class（UTF-8 靠 `MRB_UTF8_STRING` 編譯選項）、
-Integer 靠 `mruby-bigint` 才有大數。題庫 27 個 answer 全部驗證過（`node tools/mruby-wasm/spike.mjs`）。
-需要完整 CRuby 語意就回 `main`。
+**沒有 Regexp**（題目的 `answer` 不能用正規式）。題庫 27 個 answer 全部驗證過
+（`node tools/mruby-wasm/spike.mjs`，CI 也會跑）。需要完整 CRuby 語意就回 `main`。
+
+除了題庫用到的之外，build 還收了 math / time / struct / pack / rational / complex
+（+37 KB gzip），這樣日後加題目大多不必重建 wasm。
 
 wasm 的重建方式與 gate 測試都放在 `tools/mruby-wasm/`（用 mise 的 emsdk，不需要 docker）。
 bundler 的 tree-shaking 對這條路線同樣無效 —— 所有 JS 加起來約 100 KB，故本專案不使用 Vite/esbuild。

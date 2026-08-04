@@ -27,6 +27,15 @@ MRuby::CrossBuild.new('wasm') do |conf|
   conf.gem core: 'mruby-bigint'   # host build 有；2**100 才會與 CRuby 一致
   conf.gem core: 'mruby-encoding' # 3.4+ 會自動開啟 MRB_UTF8_STRING
 
+  # 題庫現在沒用到，但常見到值得先收：共 +37KB gzip，換「加題目不必碰 emsdk」。
+  conf.gem core: 'mruby-math'     # Math.sqrt
+  conf.gem core: 'mruby-time'     # Time.now
+  conf.gem core: 'mruby-struct'   # Struct.new
+  conf.gem core: 'mruby-pack'     # Array#pack / String#unpack
+  conf.gem core: 'mruby-rational' # Rational(1, 2)
+  conf.gem core: 'mruby-complex'  # Complex(1, 2)
+  # 仍然沒有的：Regexp（mruby core 沒有，要外部 mruby-onig-regexp + Onigmo）
+
   # ponytail: 刻意不收 mruby-io（prelude.rb 自己做 puts/$stdout/StringIO）與 mruby-bin-*（不需要 CLI）
   # 上限：若哪天要讀檔或 socket，才需要 stdlib-io gembox + POSIX HAL。
 

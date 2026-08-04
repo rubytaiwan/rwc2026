@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and WebAssembly for in-browser Ruby execution.
 
-> **本分支（`exp/mruby-wasm`）是實驗分支**：引擎換成 C mruby 4.0 編出來的 wasm（265 KB gzip），取代 `main` 的 CRuby `ruby.wasm`（4.8 MB gzip）。`main` 仍是 CRuby，線上部署未受影響。
+> **本分支（`exp/mruby-wasm`）是實驗分支**：引擎換成 C mruby 4.0 編出來的 wasm（301 KB gzip），取代 `main` 的 CRuby `ruby.wasm`（4.8 MB gzip）。`main` 仍是 CRuby，線上部署未受影響。
 
 ## Current Status（2026-08-02）
 
@@ -73,7 +73,8 @@ JEKYLL_ENV=production bundle exec jekyll build
 ### Assets
 
 - `assets/ruby-wasm/mruby.js` — emscripten glue（11.3KB raw / 4KB gzip）；定義 `window.createMruby`，用 `locateFile` 指到 `mruby.wasm`
-- `assets/ruby-wasm/mruby.wasm` — C mruby 4.0.0 build（794KB raw / **265KB gzip**），含 parser（`mruby-compiler`）所以能 eval 玩家輸入的任意字串。gembox：`stdlib` + random/sprintf/metaprog/bigint/encoding/compiler，**不含 mruby-io**（prelude 自己做 stdout）。編譯開 `MRB_UTF8_STRING`。
+- `assets/ruby-wasm/mruby.wasm` — C mruby 4.0.0 build（870KB raw / **301KB gzip**），含 parser（`mruby-compiler`）所以能 eval 玩家輸入的任意字串。gembox：`stdlib` + compiler/random/sprintf/metaprog/bigint/encoding + math/time/struct/pack/rational/complex，**不含 mruby-io**（prelude 自己做 stdout）。編譯開 `MRB_UTF8_STRING`。
+  - **沒有 Regexp** —— mruby core 沒有，要外部 `mattn/mruby-onig-regexp` + Onigmo。所以題目的 `answer` 不能用正規式（`gsub("a","o")` 這種字串樣式可以）。
   - 重建：`sh tools/mruby-wasm/build.sh`，驗證：`node tools/mruby-wasm/spike.mjs`
   - 沒有 stdlib、沒有 `Encoding` class；真的需要完整 CRuby 語意就回 `main`（17.2MB raw / 4.8MB gzip 的 `ruby.wasm`）
 - `assets/js/qrcode.min.js` — `qrcode-generator` UMD bundle; exposes `window.qrcode(typeNumber, errorLevel)`

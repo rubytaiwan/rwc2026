@@ -7,12 +7,52 @@
 
 | 檔案 | raw | gzip |
 |---|---|---|
-| `assets/ruby-wasm/mruby.wasm` | 794,394 | **265,239** |
-| `assets/ruby-wasm/mruby.js`（emscripten glue） | 11,331 | 4,085 |
-| **合計** | 805,725 | **269,324** |
+| `assets/ruby-wasm/mruby.wasm` | 869,650 | **302,539** |
+| `assets/ruby-wasm/mruby.js`（emscripten glue） | 15,786 | 5,266 |
+| **合計** | 885,436 | **307,805** |
 | `assets/ruby-wasm/ruby.wasm`（`main`，CRuby 無 stdlib） | 17,190,431 | ~4,800,000 |
 
-**4.8 MB → 0.27 MB gzip，約 18×。**
+**4.8 MB → 0.31 MB gzip，約 16×。**
+
+其中 37 KB 是「保險 gem」：題庫沒用到但常見的 math / time / struct / pack /
+rational / complex（最小組合是 265 KB gzip）。收它們是為了日後加題目時不必重建 wasm ——
+CI 的 gate 會擋住「answer 用到沒編進去的東西」，但擋住之後還是得有人跑 `build.sh`。
+
+### 這顆裡面有 / 沒有什麼
+
+```
+有：Array/String/Hash/Range/Enumerable/Numeric/Symbol 全套 ext、Set、Comparable、
+    Enumerator、bigint（2**100）、sprintf / String#%、metaprog、UTF-8、
+    gsub 的字串樣式、Math、Time、Struct、pack/unpack、Rational、Complex
+沒有：Regexp（"a" =~ /a/ → NameError）、JSON、mruby-io（stdout 由 prelude 代勞）
+```
+
+Regexp 是唯一硬骨頭：mruby core 沒有，要外部 gem。所以**題庫的 answer 不能用正規式**。
+
+### 真的需要 Regexp 時（已實測可行，+140 KB gzip）
+
+選 `mattn/mruby-onig-regexp`（Onigmo，**CRuby 自己用的引擎**，2026-06 還有 commit）。
+其他選項都不行：`mruby-hs-regexp` 停在 2016，還在用 mruby 1.x 的 `ARGS_ANY()`，直接編不過；
+PCRE 兩顆要外部庫且語意與 Ruby 不同。
+
+`conf.gem github: "mattn/mruby-onig-regexp"` 加下去會踩兩個坑：
+
+1. gem 把 `--host <build 名稱>` 傳給 Onigmo 的 `configure`，而 Onigmo 6.2.0 的 `config.sub`
+   完全不認得 wasm。解法是餵一個它認得的三元組（CC/LD/AR 早就被指向 emcc 了）：
+   ```ruby
+   conf.host_target = 'i686-pc-linux-gnu'
+   ```
+2. libtool 產出的 `.libs/libonigmo.a` 是 96 bytes 的空殼，連結會噴
+   `undefined symbol: OnigEncodingUTF_8`。自己用 `emar` 從 `.o` 重打包：
+   ```sh
+   emar rcs libonigmo.a $(find <build>/mrbgems/mruby-onig-regexp/onigmo-6.2.0 -name '*.o' -not -path '*/.libs/*')
+   ```
+   然後把它加進 `build.sh` 的 emcc 輸入。
+
+實測全部可用：`"banana" =~ /na/`、`gsub(/a/,"o")`、`sub(/na/) { |m| m.upcase }`、
+`match(...)[1]`、`scan(/\d/)`、`/ruby/ === str`、`$1`、日文（`gsub(/語/, "GO")`）。
+
+體積：300 KB → **441 KB gzip**（+47%）。題庫沒用到正規式，所以目前不收。
 
 ## 啟動成本（Chrome，M 系列 Mac，本機 localhost，兩邊同機同法量測）
 
