@@ -14,19 +14,19 @@
 
 **4.8 MB → 0.27 MB gzip，約 18×。**
 
-## 啟動成本（Chrome，M 系列 Mac，本機 localhost）
+## 啟動成本（Chrome，M 系列 Mac，本機 localhost，兩邊同機同法量測）
 
-在頁面 console 逐段量測：
+| 階段 | mruby | 階段 | CRuby（`origin/main`） |
+|---|---|---|---|
+| `createMruby()`（instantiate + 編譯） | 21 ms | `WebAssembly.compileStreaming` | 86 ms |
+| `mrb_open()` | <1 ms | `DefaultRubyVM(module)` | 113 ms |
+| eval prelude | 1 ms | `require "stringio"` | <1 ms |
+| 5 次 eval（等同 `computeAllExpected`） | <1 ms | 5 次 eval | 2 ms |
+| **合計** | **22 ms** | **合計** | **201 ms** |
 
-| 階段 | ms |
-|---|---|
-`createMruby()`（instantiate + wasm 編譯） | 21
-`mrb_open()` | <1
-eval prelude | 1
-`computeAllExpected()` 等值的 5 次 eval | <1
-**合計** | **22**
-
-（CRuby 版要先 `compileStreaming` 一顆 17 MB 的 module，量級差異來自這裡。）
+約 **9×**。注意這是本機、檔案已在快取的情況；攤位現場真正的差別是下載量
+（265 KB vs 4.8 MB），行動網路下差距會被放大得多。CRuby 那邊的 86 ms 還可能受
+Chrome code cache 眷顧（同一顆 module 先前已編譯過），屬樂觀值。
 
 ## Gate — `node tools/mruby-wasm/spike.mjs`
 
