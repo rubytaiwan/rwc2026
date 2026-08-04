@@ -1193,7 +1193,7 @@ window.submitForm = async function () {
   btn.textContent = UI.form_submitting;
 
   try {
-    await fetch(SUBMIT_URL, {
+    const resp = await fetch(SUBMIT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1206,6 +1206,10 @@ window.submitForm = async function () {
         },
       }),
     });
+    // 訂閱失敗不阻擋玩家，但現場要看得出「信到底寄出了沒」
+    const r = await resp.json().catch(() => null);
+    if (!resp.ok || !r?.mailed) console.warn('[subscribe] 未寄出', resp.status, r);
+    else console.info('[subscribe] ok, subscriber', r.subscriber_id);
   } catch (e) {
     console.warn('Form submit error (continuing anyway):', e);
   }

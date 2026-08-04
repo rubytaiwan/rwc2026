@@ -58,27 +58,35 @@ var worker_default = {
         });
       }
     }
-    if (subscriberId) {
-      await fetch(`${LISTMONK_BASE}/subscribers/lists`, {
-        method: "PUT",
-        headers,
-        body: JSON.stringify({
-          ids: [subscriberId],
-          action: "add",
-          target_list_ids: [LISTMONK_LIST_ID],
-          status: "confirmed"
-        })
-      });
-      await fetch(`${LISTMONK_BASE}/tx`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          subscriber_email: body.email,
-          template_id: LISTMONK_TX_TEMPLATE_ID
-        })
-      });
-    }
-    return new Response(JSON.stringify(createData), {
+    // 這兩步以前是 fire-and-forget，寄信失敗時完全無跡可尋（worker 照樣回 200）。
+    // 現在把 status/body 帶回去，前端 console 就看得到。
+    const step = async (label, url, init) => {
+      const resp = await fetch(url, { headers, ...init });
+      const text = await resp.text();
+      return { label, ok: resp.ok, status: resp.status, body: text.slice(0, 300) };
+    };
+    const listResult = await step("subscribers/lists", `${LISTMONK_BASE}/subscribers/lists`, {
+      method: "PUT",
+      body: JSON.stringify({
+        ids: [subscriberId],
+        action: "add",
+        target_list_ids: [LISTMONK_LIST_ID],
+        status: "confirmed"
+      })
+    });
+    const txResult = await step("tx", `${LISTMONK_BASE}/tx`, {
+      method: "POST",
+      body: JSON.stringify({
+        subscriber_email: body.email,
+        template_id: LISTMONK_TX_TEMPLATE_ID
+      })
+    });
+    return new Response(JSON.stringify({
+      subscriber_id: subscriberId,
+      created: !!createData.data?.id,
+      mailed: txResult.ok,
+      steps: [listResult, txResult]
+    }), {
       status: 200,
       headers: { ...CORS, "Content-Type": "application/json" }
     });
