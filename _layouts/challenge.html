@@ -23,16 +23,18 @@
   <link rel="stylesheet" href="{{ '/assets/css/tailwind.css' | relative_url }}">
   <!-- Cover section styles -->
   {% include cover-styles.html %}
+  <!-- defer: challenge-body 的 inline script 是 type="module"（也是 defer），
+       依文件順序在這些之後執行，所以拿得到 window.qrcode / ruby-wasm-wasi / hljs -->
   <!-- QR Code generator -->
-  <script src="{{ '/assets/js/qrcode.min.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/js/qrcode.min.js' | relative_url }}"></script>
   <!-- Ruby WASM UMD bundle (local asset) -->
-  <script src="{{ '/assets/ruby-wasm/browser.umd.js' | relative_url }}"></script>
+  <script defer src="{{ '/assets/ruby-wasm/browser.umd.js' | relative_url }}"></script>
   <!-- highlight.js — syntax highlight for crosslang questions -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/python.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/php.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/python.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/php.min.js"></script>
 </head>
 <body style="margin: 0; font-family: {% if page.lang == 'ja' %}'Noto Sans JP', {% endif %}Montserrat, sans-serif;">
   <!-- Language Switcher -->

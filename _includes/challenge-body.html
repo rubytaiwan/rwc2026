@@ -1280,7 +1280,9 @@ end`;
 // ── 載入 Ruby WASM ────────────────────────────────────────
 async function initRuby() {
   const statusEl = document.getElementById('ruby-status');
-  const wasmUrl  = '{{ "/assets/ruby-wasm/ruby+stdlib.wasm" | relative_url }}';
+  // ponytail: stdlib-less build (17MB vs 32MB) — 題庫答案全是 core Ruby。
+  // 若某題答案需要 require，改回 ruby+stdlib.wasm。
+  const wasmUrl  = '{{ "/assets/ruby-wasm/ruby.wasm" | relative_url }}';
   try {
     const { DefaultRubyVM } = window["ruby-wasm-wasi"];
 

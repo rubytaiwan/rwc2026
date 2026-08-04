@@ -62,14 +62,14 @@ JEKYLL_ENV=production bundle exec jekyll build
 - `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
 - `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
-- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js and ruby-wasm browser.umd.js
+- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, ruby-wasm browser.umd.js and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
 - `_includes/cover-styles.html` — CSS for the cover section
 
 ### Assets
 
 - `assets/ruby-wasm/browser.umd.js` — Ruby 4.0 WASM JS bridge (`@ruby/4.0-wasm-wasi@2.8.1`); exposes `window["ruby-wasm-wasi"]`
-- `assets/ruby-wasm/ruby+stdlib.wasm` — Ruby 4.0 WASM binary (~31MB)
+- `assets/ruby-wasm/ruby.wasm` — Ruby 4.0 WASM binary, **stdlib-less** build (17.2MB raw / 4.8MB gzip). This is ~99% of the page's transfer weight. Task answers and omikuji only use core Ruby; `StringIO` (used to capture stdout in `computeAllExpected()`) is a built-in extension, not a stdlib `.rb`, so it still `require`s fine. If a task answer ever needs real stdlib, swap back to `ruby+stdlib.wasm` (32.5MB) and update `wasmUrl` in `_includes/challenge-body.html`.
 - `assets/js/qrcode.min.js` — `qrcode-generator` UMD bundle; exposes `window.qrcode(typeNumber, errorLevel)`
 - `assets/images/rubytw_logo.png` — Ruby Taiwan logo (used in Canvas scorecard)
 
