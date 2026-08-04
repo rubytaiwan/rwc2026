@@ -47,7 +47,7 @@ exec_error_prefix: "執行錯誤:"
 feedback_correct: "答對了！"
 feedback_wrong: "答案不對，還有 {n} 次機會"
 feedback_attempts_remaining: "剩 {n} 次"
-feedback_exhausted: "3 次機會用完，答案是："
+feedback_exhausted: "機會用完，答案是："
 
 # ── Result Phase ──
 result_title: "🎉 挑戰完成！"
@@ -107,14 +107,14 @@ ai_prompt_instruction: "請先問我對這題的初步想法，再視情況給�
 
 # ── Lang Select Phase ──
 lang_select_title: "你主要使用哪種語言？"
-lang_select_subtitle: "接下來 3 題，看你熟悉的語言，用 Ruby 寫出相同效果"
+lang_select_subtitle: "接下來 3 題，看你熟悉的語言，從 4 個選項挑出相同效果的 Ruby 寫法"
 lang_select_js: "JavaScript"
 lang_select_py: "Python"
 lang_select_php: "PHP"
 
 # ── Crosslang Phase ──
-crosslang_prompt: "用 Ruby 寫出相同效果："
-crosslang_input_placeholder: "Ruby 表達式"
+crosslang_prompt: "選出效果相同的 Ruby 寫法："
+crosslang_choices_label: "四個選項，可能有兩個都對，選中任一個就算過"
 crosslang_badge: "跨語言挑戰"
 
 # ── Form additions ──

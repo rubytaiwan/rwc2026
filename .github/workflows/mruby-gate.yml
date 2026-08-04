@@ -31,6 +31,7 @@ jobs:
         with:
           node-version: '24'
 
-      # 15 個 quiz answer + 45 個 crosslang answer 全部丟進 VM 跑，
-      # 逐字元比對 YAML 的 expected；另檢查 srand 決定性、UTF-8、gzip 體積。
+      # 15 個 quiz answer + 45 個 crosslang answer 全部丟進 VM 跑，逐字元比對 YAML 的
+      # expected；跨語言題的 15×4 個選項也實跑（每題至少一對一錯）；
+      # 另檢查 srand 決定性、UTF-8、gzip 體積。
       - run: node tools/mruby-wasm/spike.mjs

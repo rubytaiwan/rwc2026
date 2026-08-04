@@ -35,6 +35,26 @@ function parseList(text) {
   }
   return out;
 }
+// 引號後面可能跟著 `# 也對` 之類的註解，unq() 認不出來 —— 先切掉
+const stripComment = (s) => {
+  s = s.trim();
+  const q = s[0];
+  if (q === '"' || q === "'") return s.slice(0, s.lastIndexOf(q) + 1);
+  return s.replace(/\s+#.*$/, '');
+};
+// choices.yml：`id:` 之後跟著三個 `- "…"`（刻意不用 anchor，這個 parser 不吃）
+function parseChoices(text) {
+  const out = {};
+  let key = null;
+  for (const line of text.split('\n')) {
+    if (/^\s*(#|$)/.test(line)) continue;
+    const k = line.match(/^([a-z0-9_]+):\s*$/);
+    if (k) { key = k[1]; out[key] = []; continue; }
+    const item = line.match(/^\s+- (.*)$/);
+    if (item && key) out[key].push(unq(stripComment(item[1])));
+  }
+  return out;
+}
 
 // ── VM ────────────────────────────────────────────────────
 const createMruby = require_(join(ROOT, 'assets/ruby-wasm/mruby.js'));
@@ -119,7 +139,7 @@ head('crosslang answers（逐字元比對 YAML expected）');
 let clCount = 0;
 for (const lang of ['zh-TW', 'en', 'ja']) {
   const dir = join(ROOT, '_data/crosslang', lang);
-  for (const f of readdirSync(dir)) {
+  for (const f of readdirSync(dir).filter((n) => n.endsWith('.yml'))) {
     for (const q of parseList(readFileSync(join(dir, f), 'utf8'))) {
       if (!q.answer) continue;
       clCount++;
@@ -129,6 +149,32 @@ for (const lang of ['zh-TW', 'en', 'ja']) {
   }
 }
 console.log(`  ${clCount} 題比對完成`);
+
+head('crosslang 4 選 1（每個選項實跑；判定看輸出，不看標記）');
+const CHOICES = parseChoices(readFileSync(join(ROOT, '_data/crosslang/choices.yml'), 'utf8'));
+const clDir = join(ROOT, '_data/crosslang/zh-TW');   // id/answer/expected 三語相同
+const clDefs = readdirSync(clDir).filter((n) => n.endsWith('.yml'))
+  .flatMap((f) => parseList(readFileSync(join(clDir, f), 'utf8')))
+  .filter((d) => d.answer);
+for (const def of clDefs) {
+  const others = CHOICES[def.id];
+  if (!others) { bad(`choices.yml 缺 ${def.id}`); continue; }
+  const all = [def.answer, ...others];
+  if (all.length !== 4) bad(`${def.id} 湊出 ${all.length} 個選項（要 4 個）`);
+  const outs = all.map((c) => ev(crosslangWrapper(c)));
+  const okFlags = outs.map((o) => o.trim() === def.expected.trim());
+  const nOk = okFlags.filter(Boolean).length;
+  if (nOk === 0) bad(`${def.id} 沒有任何選項的輸出等於 expected ${JSON.stringify(def.expected)}`);
+  if (nOk === all.length) bad(`${def.id} 四個選項全對，沒有干擾選項`);
+  console.log(`  ${def.id} — ${nOk} 對 / ${all.length}`);
+  all.forEach((c, i) => {
+    const err = outs[i].includes('Error:');
+    console.log(`    ${okFlags[i] ? '✓' : err ? '!' : '✗'} ${c.padEnd(52)} => ${JSON.stringify(outs[i].slice(0, 48))}`);
+  });
+}
+const orphans = Object.keys(CHOICES).filter((id) => !clDefs.some((d) => d.id === id));
+if (orphans.length) bad(`choices.yml 有孤兒 id（題庫裡沒這題）：${orphans.join(', ')}`);
+console.log(`  ${clDefs.length} 題 × 4 選項；「!」= 該選項會拋例外（玩家看到紅字，算答錯，可接受）`);
 
 head('srand 決定性 / rand');
 const sh = (seed) => ev(quizWrapper(`srand(${seed})\ngem = [3, 7, 1, 9, 4]\nputs gem.shuffle`));

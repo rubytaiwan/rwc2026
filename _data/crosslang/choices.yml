@@ -1,0 +1,89 @@
+# 跨語言題的其餘三個選項。Ruby 程式碼與 UI 語言無關，所以只放這一份，
+# 不進 <lang>/ 目錄（<lang>/*.yml 只剩 code / expected / answer / tips 要三語維護）。
+#
+# 每個 id 對三個字串；渲染時把該題的 `answer` 塞進來洗牌成 4 選 1。
+# 判定不看「哪個是正解」—— 選項直接丟進 mruby 跑，輸出等於 `expected` 就算對，
+# 所以標了「也對」的選項自然會被接受，不需要額外欄位。
+#
+# 只有 6 題（*_sum ×3、js_odd_filter、py_title_case、php_join、php_repeat）刻意留
+# 兩個都對的寫法 —— 那些替代寫法本身有教學價值（reduce(:+)、reject(&:even?)、
+# Array#* 當 join）。其餘 9 題單一正解，否則 4 選 1 猜中率太高。
+#
+# 不用 YAML anchor（gate 的 mini parser 不吃），重複的就照抄一份。
+# 加/改選項後跑 `node tools/mruby-wasm/spike.mjs`：它會實跑每個選項，
+# 檢查每題湊得出 4 個、至少一個對、至少一個錯。
+
+js_odd_filter:
+  - "[1, 2, 3, 4, 5].reject(&:even?)"     # 也對
+  - "[1, 2, 3, 4, 5].select(&:even?)"
+  - "[1, 2, 3, 4, 5].map(&:odd?)"
+
+js_sum:
+  - "[1, 2, 3, 4, 5].reduce(:+)"          # 也對
+  - "[1, 2, 3, 4, 5].size"
+  - "[1, 2, 3, 4, 5].inject { |a, b| a * b }"
+
+py_sum:
+  - "[1, 2, 3, 4, 5].reduce(:+)"          # 也對
+  - "[1, 2, 3, 4, 5].size"
+  - "[1, 2, 3, 4, 5].inject { |a, b| a * b }"
+
+php_sum:
+  - "[1, 2, 3, 4, 5].reduce(:+)"          # 也對
+  - "[1, 2, 3, 4, 5].size"
+  - "[1, 2, 3, 4, 5].inject { |a, b| a * b }"
+
+js_reverse_string:
+  - '"hello".chars.sort.join'
+  - '"hello".chars.reverse'
+  - '"hello".upcase'
+
+js_square:
+  - "[1, 2, 3].map { |n| n ** 3 }"
+  - "[1, 2, 3].map { |n| n * 2 }"
+  - "[1, 2, 3].map { |n| 2 ** n }"
+
+js_max:
+  - "[3, 1, 4, 1, 5, 9, 2, 6].sum"
+  - "[3, 1, 4, 1, 5, 9, 2, 6].min"
+  - "[3, 1, 4, 1, 5, 9, 2, 6].size"
+
+py_divisible_by_3:
+  - "(1..10).select { |n| n % 3 == 1 }"
+  - "(1..10).reject { |n| n % 3 == 0 }"
+  - "(1..10).select { |n| n / 3 == 0 }"
+
+py_title_case:
+  - '"hello world".split(" ").map(&:capitalize).join(" ")'  # 也對
+  - '"hello world".capitalize'
+  - '"hello world".split.map(&:upcase).join(" ")'
+
+py_count_gt:
+  - "[1, 2, 3, 4, 5].count { |n| n >= 2 }"
+  - "[1, 2, 3, 4, 5].count"
+  - "[1, 2, 3, 4, 5].select { |n| n > 2 }"
+
+php_count_gt:
+  - "[1, 2, 3, 4, 5].count { |n| n >= 2 }"
+  - "[1, 2, 3, 4, 5].count"
+  - "[1, 2, 3, 4, 5].select { |n| n > 2 }"
+
+py_double:
+  - "[1, 2, 3].map { |n| n * 3 }"
+  - "[1, 2, 3] * 2"
+  - "[1, 2, 3].map { |n| n ** 2 }"
+
+php_upcase:
+  - '"hello".chars.map(&:upcase)'
+  - '"hello".capitalize'
+  - '"hello".downcase'
+
+php_join:
+  - '["apple", "banana", "cherry"] * ", "'  # 也對
+  - '["apple", "banana", "cherry"].join'
+  - '["apple", "banana", "cherry"].join(",")'
+
+php_repeat:
+  - 'Array.new(3, "ab").join'             # 也對
+  - '["ab", "ab", "ab"]'
+  - '"ab" * 2'
