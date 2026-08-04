@@ -4,7 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and Ruby 4.0 WebAssembly for in-browser Ruby execution.
+Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and WebAssembly for in-browser Ruby execution.
+
+> **引擎是 C mruby 4.0 編出來的 wasm**（441 KB gzip），2026-08-04 從 CRuby `ruby.wasm`
+> （4.8 MB gzip）換過來（PR #3）。這是刻意的實驗：攤位本身就是實驗性專案。
+> 要回 CRuby 就 revert 那個 merge —— `ruby.wasm` 與 `browser.umd.js` 還在 git history 裡
+> （commit `42034c2`），`_includes/challenge-body.html` 的 `initRuby()` 也會一併還原。
 
 ## Current Status（2026-08-02）
 
@@ -24,7 +29,8 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
   - List：`COSCUP2026-Booth`（ID 11，UUID `87b9fdf5-…`，設定於 `_config.yml`）
   - API user：`coscup2026-booth`（token 存於 repo secret `LISTMONK_API_TOKEN`）
   - 完成通知信：tx template **ID 6**（COSCUP 版，於 listmonk 後台維護）
-- **CI**：push `main` 自動部署 Pages；`workers/coscup2026-subscribe/**` 有變更自動部署 Worker（`.github/workflows/deploy-worker.yml`，需 repo secrets `CLOUDFLARE_API_TOKEN` + `LISTMONK_API_TOKEN`）
+- **CI**：push `main` 自動部署 Pages；`workers/coscup2026-subscribe/**` 有變更自動部署 Worker（`.github/workflows/deploy-worker.yml`，需 repo secrets `CLOUDFLARE_API_TOKEN` + `LISTMONK_API_TOKEN`）；`mruby-gate.yml` 在題庫 / prelude / wasm / 建置腳本有變更時把整份題庫餵進 VM 實跑
+- **引擎換成 mruby（2026-08-04，PR #3）**：CRuby `ruby.wasm` 4.8 MB gzip → C mruby 441 KB gzip（1/11），VM 啟動 201 ms → 22 ms。做法與量測見 `tools/mruby-wasm/RESULT.md`。已知差異：例外訊息文字與 CRuby 不同、沒有 stdlib 與 `Encoding` class、沒有 JSON
 
 ### 待辦 / 注意事項
 
@@ -62,14 +68,19 @@ JEKYLL_ENV=production bundle exec jekyll build
 - `_includes/challenge-body.html` — main challenge page logic (4-phase game flow, i18n-aware)
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
 - `_data/crosslang/<lang>/` — cross-language task bank per UI language (javascript/python/php, 5 tasks each)
-- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, ruby-wasm browser.umd.js and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
+- `_layouts/challenge.html` — layout for the challenge page; loads qrcode.min.js, `mruby.js`(emscripten glue) and highlight.js. All `<head>` scripts use `defer`; this is safe because the inline script in `challenge-body.html` is `type="module"` (also deferred) and runs after them in document order.
+- `_includes/mruby-prelude.rb` — Ruby prelude eval'd at boot; supplies the `require` no-op, `StringIO`, `STDOUT`/`$stdout` and `Kernel#puts` that mruby lacks. **It is inlined into JS via ``String.raw`{% include %}` `` — no backticks or `${` allowed in that file** (`tools/mruby-wasm/spike.mjs` guards this).
 - `_includes/cover.html` — Ruby Taiwan cover section SVG artwork
 - `_includes/cover-styles.html` — CSS for the cover section
+- `tools/mruby-wasm/` — how the wasm is produced: `build.sh`（mise emsdk，無需 docker）、`build_config.rb`、`glue.c`、`spike.mjs`（把整份題庫餵進 VM 的 gate）
 
 ### Assets
 
-- `assets/ruby-wasm/browser.umd.js` — Ruby 4.0 WASM JS bridge (`@ruby/4.0-wasm-wasi@2.8.1`); exposes `window["ruby-wasm-wasi"]`
-- `assets/ruby-wasm/ruby.wasm` — Ruby 4.0 WASM binary, **stdlib-less** build (17.2MB raw / 4.8MB gzip). This is ~99% of the page's transfer weight. Task answers and omikuji only use core Ruby; `StringIO` (used to capture stdout in `computeAllExpected()`) is a built-in extension, not a stdlib `.rb`, so it still `require`s fine. If a task answer ever needs real stdlib, swap back to `ruby+stdlib.wasm` (32.5MB) and update `wasmUrl` in `_includes/challenge-body.html`.
+- `assets/ruby-wasm/mruby.js` — emscripten glue（15.8KB raw / 5.2KB gzip）；定義 `window.createMruby`，用 `locateFile` 指到 `mruby.wasm`
+- `assets/ruby-wasm/mruby.wasm` — C mruby 4.0.0 build（1.38MB raw / **441KB gzip**），含 parser（`mruby-compiler`）所以能 eval 玩家輸入的任意字串。gembox：`stdlib` + compiler/random/sprintf/metaprog/bigint/encoding + math/time/struct/pack/rational/complex + **`mattn/mruby-onig-regexp`（Onigmo，sha 釘死）**，**不含 mruby-io**（prelude 自己做 stdout）。編譯開 `MRB_UTF8_STRING`。
+  - Onigmo 有兩個建置坑，已在 `build_config.rb` / `build.sh` 處理：`conf.host_target = 'i686-pc-linux-gnu'`（Onigmo 6.2.0 的 `config.sub` 不認得 wasm），以及用 `emar` 從 `.o` 重打包 `libonigmo.a`（libtool 產出的是 96 bytes 空殼）。
+  - 重建：`sh tools/mruby-wasm/build.sh`，驗證：`node tools/mruby-wasm/spike.mjs`
+  - 沒有 stdlib、沒有 `Encoding` class；真的需要完整 CRuby 語意就 revert PR #3（`ruby.wasm` 17.2MB raw / 4.8MB gzip 還在 git history 的 commit `42034c2`）
 - `assets/js/qrcode.min.js` — `qrcode-generator` UMD bundle; exposes `window.qrcode(typeNumber, errorLevel)`
 - `assets/images/rubytw_logo.png` — Ruby Taiwan logo (used in Canvas scorecard)
 
@@ -94,7 +105,7 @@ Each task has:
 - `answer` — the Ruby method/operator (e.g. `.next`, `* 2`)
 - `tips` — array of `{ code, desc }` hint items
 
-Answer verification uses Ruby WASM: after the VM loads, `computeAllExpected()` runs each question's correct answer through `rubyVM.eval` and stores the output in `q.expected`. Non-deterministic methods (`.shuffle`, `.sample`) use a per-question `srand(seed)` to ensure reproducibility. **No `EXPECTED_MAP` or JS reimplementation of Ruby methods needed — any valid Ruby expression can be an `answer`.**
+Answer verification uses the wasm VM: after it loads, `computeAllExpected()` runs each question's correct answer through `rubyVM.eval` and stores the output in `q.expected`. (`rubyVM` 是包住 `mrbjs_eval` 的 6 行 shim，介面與 ruby.wasm 的 VM 相同：`eval(src).toString()`。) Non-deterministic methods (`.shuffle`, `.sample`) use a per-question `srand(seed)` to ensure reproducibility. **No `EXPECTED_MAP` or JS reimplementation of Ruby methods needed — any valid Ruby expression can be an `answer`.**
 
 ### i18n
 

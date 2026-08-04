@@ -61,3 +61,9 @@ plugins:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+# 建置工具與暫存目錄不要進 _site（tmp/ 會有 tools/mruby-wasm/build.sh clone 的
+# mruby 原始碼，約 60MB，不排除的話會整包被複製進 Pages artifact）
+exclude:
+  - tools/
+  - tmp/

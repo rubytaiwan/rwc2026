@@ -1277,31 +1277,37 @@ end`;
   }
 }
 
-// ── 載入 Ruby WASM ────────────────────────────────────────
+// ── 載入 mruby WASM ───────────────────────────────────────
+// ponytail: mruby 4.0（265KB gzip）取代 CRuby ruby.wasm（4.8MB gzip）—— 題庫 27 個 answer
+// 全部驗證過（tools/mruby-wasm/spike.mjs）。上限：mruby 沒有 stdlib、沒有 Encoding class，
+// 需要真 stdlib 的題目就得回頭用 CRuby（見 main 分支）。
 async function initRuby() {
   const statusEl = document.getElementById('ruby-status');
-  // ponytail: stdlib-less build (17MB vs 32MB) — 題庫答案全是 core Ruby。
-  // 若某題答案需要 require，改回 ruby+stdlib.wasm。
-  const wasmUrl  = '{{ "/assets/ruby-wasm/ruby.wasm" | relative_url }}';
+  const wasmUrl  = '{{ "/assets/ruby-wasm/mruby.wasm" | relative_url }}';
+  // mruby 沒有 require / StringIO / $stdout，由 prelude 補齊，
+  // 好讓下面兩個 eval wrapper 與 CRuby 版一字不差。
+  const prelude  = String.raw`{% include mruby-prelude.rb %}`;
   try {
-    const { DefaultRubyVM } = window["ruby-wasm-wasi"];
-
     statusEl.textContent = UI.wasm_step1;
-    let module;
-    try {
-      module = await WebAssembly.compileStreaming(fetch(wasmUrl));
-    } catch (_) {
-      statusEl.textContent = UI.wasm_step1_fallback;
-      const resp = await fetch(wasmUrl);
-      const buf  = await resp.arrayBuffer();
-      module = await WebAssembly.compile(buf);
-    }
+    const Module = await createMruby({
+      locateFile: () => wasmUrl,
+      // mruby parser 的 syntax error 會寫 stderr，別讓它污染 console
+      printErr: (m) => console.debug('[mruby]', m),
+    });
 
     statusEl.textContent = UI.wasm_step2;
-    const { vm } = await DefaultRubyVM(module);
+    if (Module.ccall('mrbjs_init', 'number', [], []) !== 0) throw new Error('mrbjs_init failed');
 
-    rubyVM = vm;
-    try { rubyVM.eval('require "stringio"; require "strscan"'); } catch(_) {}
+    // 只需要 eval(src).toString()，與 ruby.wasm 的 VM 介面對齊
+    rubyVM = {
+      eval: (src) => {
+        const ptr = Module.ccall('mrbjs_eval', 'number', ['string'], [src]);
+        const out = Module.UTF8ToString(ptr);
+        Module._free(ptr);
+        return { toString: () => out };
+      },
+    };
+    rubyVM.eval(prelude);
 
     await computeAllExpected();
     statusEl.textContent = UI.wasm_ready;

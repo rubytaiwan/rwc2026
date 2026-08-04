@@ -9,4 +9,5 @@ _config.local.yml
 /**/*/.DS_Store
 prev-event-data/
 package/
+tmp/
 .claude/launch.json

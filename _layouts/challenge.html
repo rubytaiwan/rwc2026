@@ -27,8 +27,8 @@
        依文件順序在這些之後執行，所以拿得到 window.qrcode / ruby-wasm-wasi / hljs -->
   <!-- QR Code generator -->
   <script defer src="{{ '/assets/js/qrcode.min.js' | relative_url }}"></script>
-  <!-- Ruby WASM UMD bundle (local asset) -->
-  <script defer src="{{ '/assets/ruby-wasm/browser.umd.js' | relative_url }}"></script>
+  <!-- mruby WASM glue (emscripten, local asset) — 定義 window.createMruby -->
+  <script defer src="{{ '/assets/ruby-wasm/mruby.js' | relative_url }}"></script>
   <!-- highlight.js — syntax highlight for crosslang questions -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>

@@ -17,11 +17,11 @@ quiz_loading: "載入中…"
 quiz_input_placeholder: ".方法名稱"
 quiz_run_btn: "▶ 執行 Ruby"
 quiz_ask_ai_btn: "✨ 詢問 AI"
-quiz_wasm_status_init: "⏳ 載入 Ruby WASM…"
+quiz_wasm_status_init: "⏳ 載入 mruby WASM…"
 quiz_tips_title: "Ruby 小密技"
 quiz_powered_by: "POWERED BY"
-quiz_powered_by_name: "Ruby WASM"
-quiz_powered_by_desc: "真實 Ruby 4.0 在瀏覽器中執行"
+quiz_powered_by_name: "mruby WASM"
+quiz_powered_by_desc: "真實 mruby 4.0 在瀏覽器中執行"
 quiz_output_waiting: "等待執行…"
 
 # ── Quiz Phase (JS dynamic) ──
@@ -33,13 +33,13 @@ diff_medium: "Medium"
 diff_hard: "Hard"
 ask_ai_opening: "✅ 開啟中…"
 
-# ── Ruby WASM Status (JS) ──
-wasm_step1: "⏳ 載入 Ruby 4.0 (1/2)…"
-wasm_step1_fallback: "⏳ 載入 Ruby 4.0 (fallback)…"
-wasm_step2: "⏳ 初始化 Ruby VM (2/2)…"
-wasm_ready: "✅ Ruby 4.0 就緒"
+# ── mruby WASM Status (JS) ──
+wasm_step1: "⏳ 載入 mruby 4.0 (1/2)…"
+wasm_step1_fallback: "⏳ 載入 mruby 4.0 (fallback)…"
+wasm_step2: "⏳ 初始化 mruby VM (2/2)…"
+wasm_ready: "✅ mruby 4.0 就緒"
 wasm_error_prefix: "❌ 載入失敗:"
-wasm_not_ready: "⏳ Ruby WASM 尚未載入，請稍候…"
+wasm_not_ready: "⏳ mruby WASM 尚未載入，請稍候…"
 wasm_no_input: "⚠️ 請先輸入 Ruby 方法再執行！"
 exec_error_prefix: "執行錯誤:"
 
@@ -95,7 +95,7 @@ proof_show_staff: "🎁 請出示此畫面給工作人員"
 proof_show_staff_sub: "完成大地遊戲並領取小禮物"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by Ruby WASM"
+footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by mruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "我正在學 Ruby，有一道練習題。請用「引導式學習（Guided Learning）」的方式幫我，不要直接給答案，而是透過提問和漸進提示引導我自己找出解法。"
