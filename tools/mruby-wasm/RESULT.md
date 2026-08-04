@@ -1,7 +1,7 @@
 # mruby.wasm 實驗結果（2026-08-04）
 
 分支 `exp/mruby-wasm`。把引擎從 CRuby `ruby.wasm` 換成 C mruby 4.0.0 編出的 wasm。
-`main` 未受影響，線上仍是 CRuby。
+2026-08-04 經 PR #3 merge 進 `main`（攤位本身是實驗性專案，這是刻意的選擇）。
 
 ## 體積
 
@@ -100,7 +100,7 @@ Chrome code cache 眷顧（同一顆 module 先前已編譯過），屬樂觀值
 
 ## 與 CRuby 的行為差異
 
-| | mruby 4.0（本分支） | CRuby 4.0（main） |
+| | mruby 4.0（現行） | CRuby 4.0（換掉的） |
 |---|---|---|
 | 例外訊息 | `undefined method 'foo' for Array` | `... for an instance of Array` |
 | SyntaxError | 由 glue 轉成字串回傳（`SyntaxError: syntax error`），parser 訊息走 `console.debug` | 直接 throw 到 JS，由 `catch` 顯示 |

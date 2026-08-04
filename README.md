@@ -33,7 +33,7 @@ Phase 4：填寫資料
 Phase 5：完成證明
   通關代碼 + QR Code + 動態背景
   出示給攤位工作人員領取小禮物
-  🎋 加碼抽一支「Ruby 御神籤」，由 Ruby WASM 抽出運勢籤詩卡，可分享 IG
+  🎋 加碼抽一支「Ruby 御神籤」，由 mruby WASM 抽出運勢籤詩卡，可分享 IG
 ```
 
 ---
@@ -51,24 +51,24 @@ Phase 5：完成證明
 | HTML Canvas API | 成績單圖片繪製 |
 | Web Share API | 手機原生分享至 Instagram |
 
-### 頁面重量（本分支：`exp/mruby-wasm`）
+### 頁面重量
 
-> ⚠️ 這是**實驗分支**：把引擎從 CRuby 換成 C mruby。`main` 仍是 CRuby，線上部署未受影響。
+> 引擎是 C mruby（2026-08-04 從 CRuby 換過來）。這是刻意的實驗 —— 攤位本身就是實驗性專案。
 
 首次載入約 **0.45 MB**（gzip），其中 wasm 佔 441 KB。
 
 | | raw | gzip |
 |---|---|---|
-| `mruby.wasm`（本分支） | 1.38 MB | **441 KB** |
+| `mruby.wasm`（現行） | 1.38 MB | **441 KB** |
 | `mruby.js`（emscripten glue） | 16 KB | 5 KB |
-| `ruby.wasm`（`main`，CRuby 無 stdlib） | 17.2 MB | 4.8 MB |
+| `ruby.wasm`（換掉的 CRuby，無 stdlib） | 17.2 MB | 4.8 MB |
 
 **11× 的差距**，且 VM 啟動（instantiate + `mrb_open` + prelude + 5 題預先求值）實測 **22 ms**
 （CRuby 版同機同法 201 ms）。
 
 代價：mruby 沒有 stdlib、沒有 `Encoding` class（UTF-8 靠 `MRB_UTF8_STRING` 編譯選項）。
 題庫 27 個 answer 全部驗證過（`node tools/mruby-wasm/spike.mjs`，CI 也會跑）。
-需要完整 CRuby 語意就回 `main`。
+需要完整 CRuby 語意就 revert 那次引擎切換（PR #3）。
 
 除了題庫用到的之外，build 還多收了幾樣玩家可能自己用上的東西：
 Regexp（Onigmo，CRuby 同引擎，+140 KB gzip —— 跨語言題是自由輸入，
@@ -108,7 +108,7 @@ bundle exec jekyll serve
 
 題庫支援三語言（`zh-TW` / `en` / `ja`），各放在 `_data/tasks/<lang>.yml`，分為三個難度。每次遊戲隨機抽出 2 Easy + 2 Medium + 1 Hard，共 5 題。
 
-新增題目只需在 `_data/tasks/<lang>.yml` 加入對應格式的 YAML 即可。答案驗證由 Ruby WASM 執行正確答案後比對輸出，`answer` 欄位可以是任意合法的 Ruby 運算式。
+新增題目只需在 `_data/tasks/<lang>.yml` 加入對應格式的 YAML 即可。答案驗證由 mruby WASM 執行正確答案後比對輸出，`answer` 欄位可以是任意合法的 Ruby 運算式。
 
 ### 跨語言題
 
