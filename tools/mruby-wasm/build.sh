@@ -29,7 +29,19 @@ cp tools/mruby-wasm/build_config.rb "$SRC_DIR/build_config/wasm.rb"
 
 ( cd "$SRC_DIR" && MRUBY_CONFIG=build_config/wasm.rb $RUN rake -j"$(sysctl -n hw.ncpu 2>/dev/null || nproc)" )
 
-$RUN emcc tools/mruby-wasm/glue.c "$SRC_DIR/build/wasm/lib/libmruby.a" \
+# Onigmo：libtool 產出的 .libs/libonigmo.a 是 96 bytes 空殼（連結會噴
+# undefined symbol: OnigEncodingUTF_8），自己用 emar 從 .o 重打包。
+ONIG_DIR="$SRC_DIR/build/wasm/mrbgems/mruby-onig-regexp/onigmo-6.2.0"
+ONIG_LIB=""
+if [ -d "$ONIG_DIR" ]; then
+  ONIG_LIB="tmp/libonigmo.a"
+  rm -f "$ONIG_LIB"
+  # shellcheck disable=SC2046
+  $RUN emar rcs "$ONIG_LIB" $(find "$ONIG_DIR" -name '*.o' -not -path '*/.libs/*')
+  echo "repacked $ONIG_LIB ($(wc -c < "$ONIG_LIB") bytes)"
+fi
+
+$RUN emcc tools/mruby-wasm/glue.c "$SRC_DIR/build/wasm/lib/libmruby.a" $ONIG_LIB \
   -I "$SRC_DIR/include" -I "$SRC_DIR/build/wasm/include" \
   -O3 -fwasm-exceptions -sSUPPORT_LONGJMP=wasm \
   -sMODULARIZE=1 -sEXPORT_NAME=createMruby -sENVIRONMENT=web,node \

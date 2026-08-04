@@ -7,52 +7,58 @@
 
 | 檔案 | raw | gzip |
 |---|---|---|
-| `assets/ruby-wasm/mruby.wasm` | 869,650 | **302,539** |
-| `assets/ruby-wasm/mruby.js`（emscripten glue） | 15,786 | 5,266 |
-| **合計** | 885,436 | **307,805** |
+| `assets/ruby-wasm/mruby.wasm` | 1,384,540 | **440,625** |
+| `assets/ruby-wasm/mruby.js`（emscripten glue） | 15,786 | 5,217 |
+| **合計** | 1,400,326 | **445,842** |
 | `assets/ruby-wasm/ruby.wasm`（`main`，CRuby 無 stdlib） | 17,190,431 | ~4,800,000 |
 
-**4.8 MB → 0.31 MB gzip，約 16×。**
+**4.8 MB → 0.45 MB gzip，約 11×。**
 
-其中 37 KB 是「保險 gem」：題庫沒用到但常見的 math / time / struct / pack /
-rational / complex（最小組合是 265 KB gzip）。收它們是為了日後加題目時不必重建 wasm ——
-CI 的 gate 會擋住「answer 用到沒編進去的東西」，但擋住之後還是得有人跑 `build.sh`。
+體積是逐步決定的，記錄一下每一段換到什麼：
+
+| 組成 | gzip | 為什麼收 |
+|---|---|---|
+| 最小可用（題庫 27 個 answer 剛好跑得動） | 265 KB | — |
+| + math / time / struct / pack / rational / complex | 301 KB（+37 KB） | 常見但題庫還沒用到；先收，日後加題目大多不必重建 wasm |
+| + Regexp（Onigmo） | 441 KB（+140 KB） | 跨語言題是**自由輸入**，玩家想用 `gsub(/l/,"L")` 解題時不該拿到 `NameError` |
+
+CI 的 gate 會擋住「answer 用到沒編進去的東西」，但擋住之後還是得有人跑 `build.sh` ——
+所以寧可先把常見的收進來。
 
 ### 這顆裡面有 / 沒有什麼
 
 ```
 有：Array/String/Hash/Range/Enumerable/Numeric/Symbol 全套 ext、Set、Comparable、
     Enumerator、bigint（2**100）、sprintf / String#%、metaprog、UTF-8、
-    gsub 的字串樣式、Math、Time、Struct、pack/unpack、Rational、Complex
-沒有：Regexp（"a" =~ /a/ → NameError）、JSON、mruby-io（stdout 由 prelude 代勞）
+    Regexp（Onigmo，含 $1 / scan / match / block 形式 / 日文）、
+    Math、Time、Struct、pack/unpack、Rational、Complex
+沒有：JSON、mruby-io（stdout 由 prelude 代勞）、stdlib 的 .rb（mruby 本來就沒有）
 ```
 
-Regexp 是唯一硬骨頭：mruby core 沒有，要外部 gem。所以**題庫的 answer 不能用正規式**。
+### Regexp 的選擇與兩個建置坑
 
-### 真的需要 Regexp 時（已實測可行，+140 KB gzip）
+選 `mattn/mruby-onig-regexp`（Onigmo，**CRuby 自己用的引擎**，2026-06 還有 commit，sha 已釘死）。
+其他選項都不行：`mruby-hs-regexp` 停在 2016、還在用 mruby 1.x 的 `ARGS_ANY()`，
+**直接編不過**（`error: call to undeclared function 'ARGS_ANY'`）；PCRE 兩顆要外部庫、
+語意也與 Ruby 不同。Onigmo 上游停在 6.2.0（2019）不是問題 —— Ruby 自己就用它。
 
-選 `mattn/mruby-onig-regexp`（Onigmo，**CRuby 自己用的引擎**，2026-06 還有 commit）。
-其他選項都不行：`mruby-hs-regexp` 停在 2016，還在用 mruby 1.x 的 `ARGS_ANY()`，直接編不過；
-PCRE 兩顆要外部庫且語意與 Ruby 不同。
-
-`conf.gem github: "mattn/mruby-onig-regexp"` 加下去會踩兩個坑：
+加下去會踩兩個坑，都已寫進 `build_config.rb` / `build.sh`：
 
 1. gem 把 `--host <build 名稱>` 傳給 Onigmo 的 `configure`，而 Onigmo 6.2.0 的 `config.sub`
-   完全不認得 wasm。解法是餵一個它認得的三元組（CC/LD/AR 早就被指向 emcc 了）：
+   完全不認得 wasm（`machine 'wasm' not recognized` → rake abort）。解法是餵一個它認得的
+   三元組（CC/LD/AR 早就被 emscripten toolchain 指向 emcc/emar 了）：
    ```ruby
    conf.host_target = 'i686-pc-linux-gnu'
    ```
 2. libtool 產出的 `.libs/libonigmo.a` 是 96 bytes 的空殼，連結會噴
-   `undefined symbol: OnigEncodingUTF_8`。自己用 `emar` 從 `.o` 重打包：
+   `undefined symbol: OnigEncodingUTF_8`。`build.sh` 用 `emar` 從 `.o` 重打包（約 1.5 MB）：
    ```sh
-   emar rcs libonigmo.a $(find <build>/mrbgems/mruby-onig-regexp/onigmo-6.2.0 -name '*.o' -not -path '*/.libs/*')
+   emar rcs tmp/libonigmo.a $(find <build>/mrbgems/mruby-onig-regexp/onigmo-6.2.0 -name '*.o' -not -path '*/.libs/*')
    ```
-   然後把它加進 `build.sh` 的 emcc 輸入。
 
-實測全部可用：`"banana" =~ /na/`、`gsub(/a/,"o")`、`sub(/na/) { |m| m.upcase }`、
-`match(...)[1]`、`scan(/\d/)`、`/ruby/ === str`、`$1`、日文（`gsub(/語/, "GO")`）。
-
-體積：300 KB → **441 KB gzip**（+47%）。題庫沒用到正規式，所以目前不收。
+gate 有 9 條正規式回歸測試（`=~`、`gsub`、`sub` block、`match[1]`、`scan`、`===`、
+`$1`、日文、以及「字串樣式版的 gsub 沒被搞壞」）。瀏覽器實測：玩家輸入
+`"hello world".gsub(/\bw/) { |c| c.upcase }` 回 `hello World`。
 
 ## 啟動成本（Chrome，M 系列 Mac，本機 localhost，兩邊同機同法量測）
 
@@ -65,7 +71,7 @@ PCRE 兩顆要外部庫且語意與 Ruby 不同。
 | **合計** | **22 ms** | **合計** | **201 ms** |
 
 約 **9×**。注意這是本機、檔案已在快取的情況；攤位現場真正的差別是下載量
-（265 KB vs 4.8 MB），行動網路下差距會被放大得多。CRuby 那邊的 86 ms 還可能受
+（441 KB vs 4.8 MB），行動網路下差距會被放大得多。CRuby 那邊的 86 ms 還可能受
 Chrome code cache 眷顧（同一顆 module 先前已編譯過），屬樂觀值。
 
 ## Gate — `node tools/mruby-wasm/spike.mjs`
@@ -75,6 +81,7 @@ Chrome code cache 眷顧（同一顆 module 先前已編譯過），屬樂觀值
 === crosslang answers（逐字元比對 expected）===  45/45 ok（zh-TW/en/ja × js/python/php）
 === srand 決定性 / rand ===                     ok（同 seed 同結果、不同 seed 不同結果、rand(12) ∈ 0..11）
 === UTF-8（MRB_UTF8_STRING）===                 ok（"日本語です".size == 5、.reverse 正確）
+=== Regexp（Onigmo）===                         9/9 ok（=~ / gsub / sub block / match[1] / scan / === / $1 / 日文）
 === 玩家亂打 ===                                 NoMethodError / SyntaxError 皆轉成字串，VM 不掛
 ✅ GATE PASS
 ```

@@ -154,6 +154,25 @@ for (const [src, want] of utf8) {
   else console.log(`  ok   ${src} => ${got}`);
 }
 
+head('Regexp（Onigmo）—— 跨語言題是自由輸入，玩家可能自己用正規式解');
+const RE = [
+  ['"banana" =~ /na/', '2'],
+  ['"banana".gsub(/a/, "o")', 'bonono'],
+  ['"banana".sub(/na/) { |m| m.upcase }', 'baNAna'],
+  ['"2026-08-04".match(/(\\d+)-(\\d+)/)[1]', '2026'],
+  ['"a1b2".scan(/\\d/)', '["1", "2"]'],
+  ['/ruby/ === "i love ruby"', 'true'],
+  ['"日本語です".gsub(/語/, "GO")', '日本GOです'],
+  ['"CamelCase".gsub(/([A-Z])/) { "_" + $1.downcase }', '_camel_case'],
+  // 標準答案的字串樣式版本不能被 Regexp 支援搞壞
+  ['"banana".gsub("a", "o")', 'bonono'],
+];
+for (const [src, want] of RE) {
+  const got = u(src);
+  if (got !== want) bad(`${src} want ${JSON.stringify(want)} got ${JSON.stringify(got)}`);
+  else console.log(`  ok   ${src.padEnd(48)} => ${got}`);
+}
+
 head('玩家亂打（不能讓 VM 掛掉，且要看得出是錯誤）');
 for (const input of ['.foo', '.sort;', '.map { |x| x', '.chars.first(2)', '; while true; break; end', '"']) {
   const out = ev(quizWrapper(`gem = [1, 2, 3]\nputs gem${input}`));
