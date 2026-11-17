@@ -5,6 +5,10 @@ site_title: "Ruby インタラクティブ錬金術 | RubyWorld Conference 2026 
 html_lang: "ja"
 date_locale: "ja-JP"
 
+# ── Hero (cover) ──
+cover_event: "RubyWorld Conference 2026 特別版"
+cover_anniv: "RubyCity MATSUE 20周年記念"
+
 # ── Section Header ──
 header_tag: "// RUBYCITY MATSUE 20周年記念 · RUBY インタラクティブ錬金術"
 header_title: "今日から Ruby を始めよう"
