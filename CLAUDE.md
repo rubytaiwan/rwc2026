@@ -18,6 +18,7 @@ Jekyll 4.4.x static site for the **RubyWorld Conference 2026 special edition** b
 - 網域 `rwc2026.ruby.tw`、Worker `rwc2026-subscribe`、listmonk API user `rwc2026-booth-api-user`
 - Hashtag：`#rubyworld #rubycity #rubytaiwan`；事件標籤 `RUBYWORLD 2026 × RUBY TAIWAN`（證明頁加 `× RUBYCITY MATSUE`）；`SALT` 改為 `RWC2026RubyTaiwan`（舊 COSCUP 的 proof code 不再有效）
 - `secret_pool` 裡的 `coscup` 換成 `matsue`
+- **預設語言為日文**：`/` = ja、`/en/`、`/zh-TW/`（原本 `/` 是 zh-TW、`/ja/` 是日文；舊的 `/ja/` 已不存在）。
 - **個資收集開關**：`_config.yml` 的 `collect_personal_data`（預設 `false`）。關閉時結果頁直接進完成證明，跳過 form phase、不呼叫 Worker、不寄通知信；開啟才有表單 / listmonk 訂閱。JS 端靠 data island 的 `collectData`，`switchPhase('form')` 在關閉時會被導向 `proof`。
 
 ### RWC 上線前待辦（基礎設施要新建，不沿用 COSCUP 的）
@@ -107,7 +108,7 @@ JEKYLL_ENV=production bundle exec jekyll build
 ### Key Files
 
 - `_config.yml` — site-wide settings; also holds `listmonk_list_uuid` for the subscription API
-- `index.html` / `en/index.html` / `ja/index.html` — language entry points (each sets `lang:` front matter and includes `challenge-body.html`)
+- `index.html`（ja，預設）/ `en/index.html` / `zh-TW/index.html` — language entry points (each sets `lang:` front matter and includes `challenge-body.html`)
 - `_includes/challenge-body.html` — 頁面 HTML（6 個 phase 的 markup，i18n 走 `{{ t.xxx }}`）+ 尾端的 `#challenge-config` data island。**這裡已經沒有任何 JS 邏輯**
 - `assets/js/challenge.js` — 全部遊戲邏輯（~970 行）。**純 JS，不經過 Liquid**，Jekyll 只是原樣複製；需要 Jekyll 的東西全部從 data island 讀（見下方 Data Island 一節）
 - `_data/tasks/` — Ruby challenge task bank per language (easy/medium/hard, 15 tasks each)
