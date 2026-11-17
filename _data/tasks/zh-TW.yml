@@ -50,7 +50,7 @@
 - category: 字串操作
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, coscup, meme, code, wasm]
+  secret_pool: [ruby, matsue, meme, code, wasm]
   question: "我裂開了！讓 gem 也跟著裂開吧（拆成一個一個字元）"
   answer: ".chars"
   tips:
@@ -82,7 +82,7 @@
 - category: 字串操作
   difficulty: easy
   secret_type: string
-  secret_pool: ["", "ruby", "", "coscup"]
+  secret_pool: ["", "ruby", "", "matsue"]
   question: "誰敢想... gem 裡面竟然什麼都沒有！確認它是不是空的"
   answer: ".empty?"
   tips:
@@ -119,7 +119,7 @@
 - category: 物件操作
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, coscup, meme, hello, world]
+  secret_pool: [ruby, matsue, meme, hello, world]
   question: "對 gem 施展硬控！凍結它，讓它再也動不了"
   answer: ".freeze"
   tips:
@@ -189,7 +189,7 @@
 - category: 物件操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "同學，作業借我抄一下！幫 gem 複製一份獨立的物件出來"
   answer: ".dup"
   tips:
@@ -221,7 +221,7 @@
 - category: 物件操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "Look in my eyes～ 來，仔細看看 gem 的真面目吧"
   answer: ".inspect"
   tips:

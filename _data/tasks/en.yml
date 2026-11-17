@@ -39,7 +39,7 @@
 - category: String Operations
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, coscup, meme, code, wasm]
+  secret_pool: [ruby, matsue, meme, code, wasm]
   question: "Break it apart! Split gem into individual characters."
   answer: ".chars"
   tips:
@@ -65,7 +65,7 @@
 - category: String Operations
   difficulty: easy
   secret_type: string
-  secret_pool: ["", "ruby", "", "coscup"]
+  secret_pool: ["", "ruby", "", "matsue"]
   question: "Wait... is there anything in gem? Check if it's empty!"
   answer: ".empty?"
   tips:
@@ -96,7 +96,7 @@
 - category: Object Operations
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, coscup, meme, hello, world]
+  secret_pool: [ruby, matsue, meme, hello, world]
   question: "Hard lock! Freeze gem so it can never be modified again."
   answer: ".freeze"
   tips:
@@ -154,7 +154,7 @@
 - category: Object Operations
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "Copy-paste time! Make an independent duplicate of gem."
   answer: ".dup"
   tips:
@@ -180,7 +180,7 @@
 - category: Object Operations
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "Look closely! Reveal the true internal representation of gem."
   answer: ".inspect"
   tips:

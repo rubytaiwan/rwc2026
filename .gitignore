@@ -11,3 +11,5 @@ prev-event-data/
 package/
 tmp/
 .claude/launch.json
+
+.env

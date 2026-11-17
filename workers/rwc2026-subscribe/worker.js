@@ -1,9 +1,10 @@
 // worker.js
 var LISTMONK_BASE = "https://edm.ruby.tw/api";
-var LISTMONK_LIST_ID = 11; // COSCUP2026-Booth (uuid 87b9fdf5-7370-498e-9be1-5792bd7709fc)
-var LISTMONK_TX_TEMPLATE_ID = 6; // COSCUP 2026 攤位大地遊戲完成通知
+var LISTMONK_LIST_ID = 13; // RWC2026-Booth（uuid 見 _config.yml）
+// 完成通知信 tx template（模板原稿見 templates/）。zh-TW 沿用 en
+var LISTMONK_TX_TEMPLATE_IDS = { ja: 7, en: 8 };
 var CORS = {
-  "Access-Control-Allow-Origin": "https://coscup2026.ruby.tw",
+  "Access-Control-Allow-Origin": "https://rwc2026.ruby.tw",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type"
 };
@@ -22,7 +23,7 @@ var worker_default = {
       return new Response("Bad Request", { status: 400 });
     }
     const a = body.attribs || {};
-    const auth = `Basic ${btoa(`coscup2026-booth:${env.LISTMONK_API_TOKEN}`)}`;
+    const auth = `Basic ${btoa(`rwc2026-booth-api-user:${env.LISTMONK_API_TOKEN}`)}`;
     const headers = { "Content-Type": "application/json", "Authorization": auth };
     const createResp = await fetch(`${LISTMONK_BASE}/subscribers`, {
       method: "POST",
@@ -82,7 +83,7 @@ var worker_default = {
       method: "POST",
       body: JSON.stringify({
         subscriber_email: body.email,
-        template_id: LISTMONK_TX_TEMPLATE_ID
+        template_id: LISTMONK_TX_TEMPLATE_IDS[body.ui_lang] ?? LISTMONK_TX_TEMPLATE_IDS.en
       })
     });
     return new Response(JSON.stringify({

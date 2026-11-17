@@ -1,14 +1,14 @@
 # ── 日本語 (ja) UI 文字列 ─────────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby インタラクティブ錬金術 | COSCUP 2026"
+site_title: "Ruby インタラクティブ錬金術 | RubyWorld Conference 2026 特別版"
 html_lang: "ja"
 date_locale: "ja-JP"
 
 # ── Section Header ──
-header_tag: "// RUBY インタラクティブ錬金術 ブースチャレンジ"
+header_tag: "// RUBYCITY MATSUE 20周年記念 · RUBY インタラクティブ錬金術"
 header_title: "今日から Ruby を始めよう"
-header_subtitle: "Ruby基礎5問 + 言語対照3問、本物のコードを実行して、ブースでギフトをもらおう！"
+header_subtitle: "Ruby基礎5問 + 言語対照3問、本物のコードを実行して、RubyCity MATSUE ブースでギフトをもらおう！"
 
 # ── Quiz Phase (HTML) ──
 quiz_progress_init: "第 1 / 5 問"
@@ -57,21 +57,22 @@ result_encourage: "{n}/8 正解、引き続き頑張ろう！"
 result_share_btn: "📲 IG にシェア"
 result_download_btn: "⬇️ 画像をダウンロード"
 result_tag_reminder: "シェアするときは <strong>@rubytaiwan2008</strong> をタグ付けしてね！"
+result_finish_btn: "次へ → 完了証明を見る"
 result_next_btn: "次へ → 情報を入力してギフトをもらう"
 
 # ── Canvas Scorecard (fillText) ──
-canvas_top_label: "COSCUP 2026 × RUBY TAIWAN"
+canvas_top_label: "RUBYWORLD 2026 × RUBY TAIWAN"
 canvas_tagline: "Ruby インタラクティブ錬金術"
-canvas_hashtags: "@rubytaiwan2008  #COSCUP2026"
+canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
-share_title: "Ruby インタラクティブ錬金術 — COSCUP 2026"
-share_text: "COSCUP 2026 の Ruby チャレンジを完了！{n}/8 問正解 @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
-share_filename: "ruby-challenge-coscup2026.png"
+share_title: "Ruby インタラクティブ錬金術 — RubyWorld Conference 2026"
+share_text: "RubyWorld Conference 2026 の Ruby チャレンジを完了！{n}/8 問正解 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──
 form_title: "📝 情報を入力"
-form_subtitle: "入力後、ブースでギフトを受け取れます！"
+form_subtitle: "入力後、RubyCity MATSUE ブースでギフトを受け取れます！"
 form_name_label: "ニックネーム"
 form_name_required: "*"
 form_name_placeholder: "あなたの呼び名は？"
@@ -89,13 +90,13 @@ form_submitting: "送信中…"
 form_validation_error: "ニックネームとEmailを入力してください"
 
 # ── Proof Phase ──
-proof_event_label: "COSCUP 2026 × RUBY TAIWAN"
+proof_event_label: "RUBYWORLD 2026 × RUBY TAIWAN × RUBYCITY MATSUE"
 proof_title: "✅ チャレンジ完了！"
 proof_show_staff: "🎁 この画面をスタッフに見せてください"
 proof_show_staff_sub: "ブースアクティビティを完了してギフトをもらおう"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by mruby WASM"
+footer_text: "Ruby Taiwan × RubyCity MATSUE · RubyWorld Conference 2026 &nbsp;·&nbsp; Powered by mruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "Rubyを学んでいます。練習問題があります。「ガイド付き学習（Guided Learning）」の方法で助けてください。答えを直接教えずに、質問と段階的なヒントで自分で解法を見つけられるよう導いてください。"
@@ -132,6 +133,6 @@ lang_switcher_ja: "JA"
 # ── Omikuji ──
 omikuji_btn: "🎋 Ruby おみくじを引く"
 omikuji_canvas_title: "Ruby おみくじ"
-omikuji_share_title: "Ruby おみくじ — COSCUP 2026"
-omikuji_share_text: "COSCUP 2026 の Ruby Taiwan ブースで「{level}」を引きました！ @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
-omikuji_share_filename: "ruby-omikuji-coscup2026.png"
+omikuji_share_title: "Ruby おみくじ — RubyWorld Conference 2026"
+omikuji_share_text: "RubyWorld Conference 2026 の RubyCity MATSUE ブースで「{level}」を引きました！ @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+omikuji_share_filename: "ruby-omikuji-rwc2026.png"

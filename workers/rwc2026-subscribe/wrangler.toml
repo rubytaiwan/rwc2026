@@ -1,4 +1,4 @@
-name = "coscup2026-subscribe"
+name = "rwc2026-subscribe"
 main = "worker.js"
 compatibility_date = "2025-01-01"
 account_id = "db4567c4283832a154b9b66c692eb307"

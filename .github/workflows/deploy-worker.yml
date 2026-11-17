@@ -3,7 +3,7 @@ name: Deploy subscribe Worker
 on:
   push:
     branches: [main]
-    paths: ['workers/coscup2026-subscribe/**']
+    paths: ['workers/rwc2026-subscribe/**']
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          workingDirectory: workers/coscup2026-subscribe
+          workingDirectory: workers/rwc2026-subscribe
           secrets: |
             LISTMONK_API_TOKEN
         env:
