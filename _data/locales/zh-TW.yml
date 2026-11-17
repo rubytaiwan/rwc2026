@@ -5,6 +5,10 @@ site_title: "Ruby 互動煉金術 | RubyWorld Conference 2026 特別版"
 html_lang: "zh-Hant-TW"
 date_locale: "zh-TW"
 
+# ── Hero (cover) ──
+cover_event: "RubyWorld Conference 2026 特別版"
+cover_anniv: "RubyCity MATSUE 20 週年紀念"
+
 # ── Section Header ──
 header_tag: "// RUBYCITY MATSUE 20 週年紀念 · RUBY 互動煉金術"
 header_title: "學 Ruby，從今天開始"

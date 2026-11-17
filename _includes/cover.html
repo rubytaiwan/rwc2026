@@ -1,4 +1,5 @@
 <div id="cover">
+  {% include cover/cover-ribbon.svg %}
   <div class="ruby_taiwan_cover">
     {% include cover/cover-sky.svg %}
     {% include cover/cover-night.svg %}
@@ -9,15 +10,24 @@
   </div>
 
   <div class="ruby_taiwan">
-    <div class="ruby_taiwan_logo">
-      {% include cover/ruby_taiwan_logo.svg %}
+    <p class="cover_event">{{ t.cover_event }}</p>
+    <div class="cover_lockup">
+      <div class="cover_brand cover_brand_tw">
+        <div class="tw_emblem">
+          {% include cover/ruby_taiwan_logo.svg %}
+        </div>
+        <div class="tw_logotype">
+          {% include cover/ruby_taiwan_logotype.svg %}
+        </div>
+        <p class="cover_since">Since 2008</p>
+      </div>
+      <span class="cover_times" aria-hidden="true">×</span>
+      <div class="cover_brand cover_brand_matsue">
+        <img class="matsue_logo" src="{{ '/assets/images/matsue/rcm2-white-vertical.png' | relative_url }}" alt="Ruby City MATSUE 2.0">
+        <p class="cover_since">Since 2006</p>
+      </div>
     </div>
-    <div class="ruby_taiwan_logotype">
-      {% include cover/ruby_taiwan_logotype.svg %}
-    </div>
-    <div class="ruby_taiwan_year">
-      <p>Since 2008</p>
-    </div>
+    <p class="cover_anniv">{{ t.cover_anniv }}</p>
     <div class="ruby_taiwan_social">
       <a href="{{ site.data.social_media.twitter }}" target="_blank" class="social-links">
         <i class="fa fa-twitter" aria-hidden="true"></i>

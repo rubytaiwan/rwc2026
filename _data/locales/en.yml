@@ -5,6 +5,10 @@ site_title: "Ruby Interactive Alchemy | RubyWorld Conference 2026 Special Editio
 html_lang: "en"
 date_locale: "en-US"
 
+# ── Hero (cover) ──
+cover_event: "RubyWorld Conference 2026 · Special Edition"
+cover_anniv: "RubyCity MATSUE 20th Anniversary"
+
 # ── Section Header ──
 header_tag: "// RUBYCITY MATSUE 20TH ANNIVERSARY · RUBY INTERACTIVE ALCHEMY"
 header_title: "Start Learning Ruby Today"
