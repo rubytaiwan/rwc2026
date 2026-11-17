@@ -39,7 +39,7 @@
 - category: 文字列操作
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, coscup, meme, code, wasm]
+  secret_pool: [ruby, matsue, meme, code, wasm]
   question: "バラバラに！gem を一文字ずつ分解してください。"
   answer: ".chars"
   tips:
@@ -65,7 +65,7 @@
 - category: 文字列操作
   difficulty: easy
   secret_type: string
-  secret_pool: ["", "ruby", "", "coscup"]
+  secret_pool: ["", "ruby", "", "matsue"]
   question: "からっぽ？ gem の中に何も入っていないか確認してください。"
   answer: ".empty?"
   tips:
@@ -96,7 +96,7 @@
 - category: オブジェクト操作
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, coscup, meme, hello, world]
+  secret_pool: [ruby, matsue, meme, hello, world]
   question: "凍結！gem を変更できないように固めてください。"
   answer: ".freeze"
   tips:
@@ -154,7 +154,7 @@
 - category: オブジェクト操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "コピー！gem の独立した複製を作ってください。"
   answer: ".dup"
   tips:
@@ -180,7 +180,7 @@
 - category: オブジェクト操作
   difficulty: hard
   secret_type: string
-  secret_pool: [ruby, coscup, meme, kaigi]
+  secret_pool: [ruby, matsue, meme, kaigi]
   question: "よく見て！gem のオブジェクト表現を確認してください。"
   answer: ".inspect"
   tips:

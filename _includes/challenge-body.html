@@ -264,9 +264,9 @@
       <p style="font-size: 12px; color: #9b9b9b; margin: 0 0 32px;">{{ t.result_tag_reminder }}</p>
 
       <button
-        onclick="switchPhase('form')"
+        onclick="switchPhase('{% if site.collect_personal_data %}form{% else %}proof{% endif %}')"
         style="background: #323232; color: #fff; border: none; border-radius: 8px; padding: 14px 36px; font-size: 15px; font-weight: 600; font-family: Montserrat, sans-serif; cursor: pointer; width: 100%;"
-      >{{ t.result_next_btn }}</button>
+      >{% if site.collect_personal_data %}{{ t.result_next_btn }}{% else %}{{ t.result_finish_btn }}{% endif %}</button>
     </div><!-- end phase-result -->
 
     <!-- ══════════════════════════════════════════
@@ -438,6 +438,7 @@
   },
   "choices":   {{ site.data.crosslang.choices | jsonify }},
   "omikuji":   {{ site.data.omikuji[page.lang] | jsonify | replace: '</', '<\/' }},
+  "collectData": {{ site.collect_personal_data | default: false | jsonify }},
   "submitUrl": {{ site.listmonk_submit_url | jsonify }},
   "listUuid":  {{ site.listmonk_list_uuid | jsonify }},
   "logoUrl":   {{ "/assets/images/rubytw_logo.png" | relative_url | jsonify }},

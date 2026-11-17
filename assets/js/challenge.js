@@ -1,4 +1,4 @@
-// COSCUP 2026 攤位大地遊戲 —— 全部遊戲邏輯。
+// RubyWorld Conference 2026 特別版（RubyCity MATSUE 20 週年紀念）攤位大地遊戲 —— 全部遊戲邏輯。
 //
 // 這個檔案是**純 JS，不經過 Liquid**（Jekyll 只是原樣複製）。所有需要 Jekyll 才拿得到的東西
 // （題庫、locale、prelude、asset URL、Worker URL）都由 _includes/challenge-body.html 的
@@ -18,7 +18,8 @@ const TASK_DEFS          = CFG.tasks;      // _data/tasks/[lang].yml
 const CROSSLANG_DEFS     = CFG.crosslang;  // _data/crosslang/[lang]/*.yml
 const CROSSLANG_CHOICES  = CFG.choices;    // _data/crosslang/choices.yml（三語共用）
 const OMIKUJI_DEFS       = CFG.omikuji;    // _data/omikuji/[lang].yml
-const SUBMIT_URL         = CFG.submitUrl;  // Cloudflare Worker（CORS 鎖 coscup2026.ruby.tw）
+const COLLECT_DATA       = CFG.collectData; // _config.yml collect_personal_data；false 時整個 form phase 被跳過
+const SUBMIT_URL         = CFG.submitUrl;  // Cloudflare Worker（CORS 鎖 rwc2026.ruby.tw）
 const LISTMONK_LIST_UUID = CFG.listUuid;
 const LOGO_URL           = CFG.logoUrl;
 const WASM_URL           = CFG.wasmUrl;
@@ -36,7 +37,7 @@ const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 8
 const MAX_ATTEMPTS       = 3;
 // 跨語言題是 4 選 1，給 3 次等於 3/4 亂猜就中，所以只給 2 次（= 50%）
 const CROSSLANG_ATTEMPTS = 2;
-const SALT               = 'COSCUP2026RubyTaiwan';
+const SALT               = 'RWC2026RubyTaiwan';
 
 // ── secret 生成 ──────────────────────────────────────────
 function generateSecret(def) {
@@ -174,6 +175,7 @@ let crosslangIds   = [];
 
 // ── Phase 切換 ────────────────────────────────────────────
 window.switchPhase = function (name) {
+  if (name === 'form' && !COLLECT_DATA) name = 'proof'; // 含還原舊存檔的情況
   const allPhases = ['quiz', 'lang-select', 'crosslang', 'result', 'form', 'proof'];
   allPhases.forEach(p => {
     const el = document.getElementById('phase-' + p);
@@ -790,6 +792,7 @@ window.submitForm = async function () {
         email,
         name,
         list_uuids: [LISTMONK_LIST_UUID],
+        ui_lang: PAGE_LANG,
         attribs: {
           phone, school, message,
           score: correctCount, total: TOTAL_QUESTIONS, lang: selectedLang,

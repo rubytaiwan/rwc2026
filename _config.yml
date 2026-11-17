@@ -18,11 +18,13 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Ruby 互動煉金術 | COSCUP 2026
+title: Ruby 互動煉金術 | RubyWorld Conference 2026 特別版
 
-# listmonk 訂閱設定（COSCUP2026-Booth list）
-listmonk_list_uuid: "87b9fdf5-7370-498e-9be1-5792bd7709fc"
-listmonk_submit_url: "https://coscup2026-subscribe.contact-db4.workers.dev"
+# listmonk 訂閱設定（RWC2026-Booth list）— TODO: 建好 list 後填入 uuid
+listmonk_list_uuid: "d5fb3aff-d7af-4df4-bcfa-953dda560787"
+# 是否收集個資（表單 + 訂閱 + 完成通知信）。false = 跳過表單，結果頁直接進完成證明，完全不送資料。
+collect_personal_data: false
+listmonk_submit_url: "https://rwc2026-subscribe.contact-db4.workers.dev"
 
 webrick:
   mime_types:

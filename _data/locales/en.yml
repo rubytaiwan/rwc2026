@@ -1,14 +1,14 @@
 # ── English (en) UI strings ───────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby Interactive Alchemy | COSCUP 2026"
+site_title: "Ruby Interactive Alchemy | RubyWorld Conference 2026 Special Edition"
 html_lang: "en"
 date_locale: "en-US"
 
 # ── Section Header ──
-header_tag: "// RUBY INTERACTIVE ALCHEMY BOOTH CHALLENGE"
+header_tag: "// RUBYCITY MATSUE 20TH ANNIVERSARY · RUBY INTERACTIVE ALCHEMY"
 header_title: "Start Learning Ruby Today"
-header_subtitle: "5 Ruby basics + 3 cross-language questions — run real Ruby code and claim your gift at the booth!"
+header_subtitle: "5 Ruby basics + 3 cross-language questions — run real Ruby code and claim your gift at the RubyCity MATSUE booth!"
 
 # ── Quiz Phase (HTML) ──
 quiz_progress_init: "Q 1 / 5"
@@ -57,21 +57,22 @@ result_encourage: "Got {n}/8 — keep it up!"
 result_share_btn: "📲 Share to IG"
 result_download_btn: "⬇️ Download"
 result_tag_reminder: "Remember to tag <strong>@rubytaiwan2008</strong> when you share!"
+result_finish_btn: "Continue → View your completion proof"
 result_next_btn: "Continue → Fill in your info to claim the gift"
 
 # ── Canvas Scorecard (fillText) ──
-canvas_top_label: "COSCUP 2026 × RUBY TAIWAN"
+canvas_top_label: "RUBYWORLD 2026 × RUBY TAIWAN"
 canvas_tagline: "Ruby Interactive Alchemy"
-canvas_hashtags: "@rubytaiwan2008  #COSCUP2026"
+canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
-share_title: "Ruby Interactive Alchemy — COSCUP 2026"
-share_text: "I completed the Ruby challenge at COSCUP 2026! Got {n}/8 @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
-share_filename: "ruby-challenge-coscup2026.png"
+share_title: "Ruby Interactive Alchemy — RubyWorld Conference 2026"
+share_text: "I completed the Ruby challenge at RubyWorld Conference 2026! Got {n}/8 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──
 form_title: "📝 Your Info"
-form_subtitle: "Fill this in to claim your booth gift!"
+form_subtitle: "Fill this in to claim your gift at the RubyCity MATSUE booth!"
 form_name_label: "Nickname"
 form_name_required: "*"
 form_name_placeholder: "What should we call you?"
@@ -89,13 +90,13 @@ form_submitting: "Submitting…"
 form_validation_error: "Please enter your nickname and email"
 
 # ── Proof Phase ──
-proof_event_label: "COSCUP 2026 × RUBY TAIWAN"
+proof_event_label: "RUBYWORLD 2026 × RUBY TAIWAN × RUBYCITY MATSUE"
 proof_title: "✅ Challenge Complete!"
-proof_show_staff: "🎁 Show this screen to booth staff"
+proof_show_staff: "🎁 Show this screen to RubyCity MATSUE booth staff"
 proof_show_staff_sub: "Complete the booth activity and claim your gift"
 
 # ── Footer ──
-footer_text: "Ruby Taiwan × COSCUP 2026 &nbsp;·&nbsp; Powered by mruby WASM"
+footer_text: "Ruby Taiwan × RubyCity MATSUE · RubyWorld Conference 2026 &nbsp;·&nbsp; Powered by mruby WASM"
 
 # ── AI Prompt ──
 ai_prompt_intro: "I'm learning Ruby and have a practice problem. Please help me using the \"Guided Learning\" approach — don't give me the answer directly, but guide me through questions and progressive hints so I can find the solution myself."
@@ -132,6 +133,6 @@ lang_switcher_ja: "JA"
 # ── Omikuji ──
 omikuji_btn: "🎋 Draw a Ruby Omikuji"
 omikuji_canvas_title: "Ruby Omikuji"
-omikuji_share_title: "Ruby Omikuji — COSCUP 2026"
-omikuji_share_text: "I drew {level} at the Ruby Taiwan booth, COSCUP 2026! @rubytaiwan2008 #COSCUP2026 #RubyTaiwan"
-omikuji_share_filename: "ruby-omikuji-coscup2026.png"
+omikuji_share_title: "Ruby Omikuji — RubyWorld Conference 2026"
+omikuji_share_text: "I drew {level} at the RubyCity MATSUE booth, RubyWorld Conference 2026! @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+omikuji_share_filename: "ruby-omikuji-rwc2026.png"

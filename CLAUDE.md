@@ -4,20 +4,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and WebAssembly for in-browser Ruby execution.
+Jekyll 4.4.x static site for the **RubyWorld Conference 2026 special edition** booth challenge game — a Ruby Taiwan × RubyCity MATSUE collaboration commemorating RubyCity MATSUE's 20th anniversary, shown at the RubyCity MATSUE booth at RubyWorld Conference 2026. (Derived from the COSCUP 2026 booth game.) Uses Minima theme, jekyll-feed plugin, Tailwind CSS v4 (via `tailwindcss-ruby`), and WebAssembly for in-browser Ruby execution.
 
 > **引擎是 C mruby 4.0 編出來的 wasm**（441 KB gzip），2026-08-04 從 CRuby `ruby.wasm`
 > （4.8 MB gzip）換過來（PR #3）。這是刻意的實驗：攤位本身就是實驗性專案。
 > 要回 CRuby 就 revert 那個 merge —— `ruby.wasm` 與 `browser.umd.js` 還在 git history 裡
 > （commit `42034c2`），`assets/js/challenge.js` 的 `initRuby()` 也會一併還原。
 
-## Current Status（2026-08-02）
+## Current Status（2026-11-17）：RubyWorld Conference 2026 特別版
+
+由 Ruby Taiwan 與 RubyCity MATSUE 合作，紀念 RubyCity MATSUE 20 週年，預計在 RWC 2026 的 RubyCity MATSUE 攤位展出。本 repo 由 COSCUP 2026 攤位版改來，**遊戲邏輯與題庫未動**，只換活動識別：
+
+- 網域 `rwc2026.ruby.tw`、Worker `rwc2026-subscribe`、listmonk API user `rwc2026-booth-api-user`
+- Hashtag：`#rubyworld #rubycity #rubytaiwan`；事件標籤 `RUBYWORLD 2026 × RUBY TAIWAN`（證明頁加 `× RUBYCITY MATSUE`）；`SALT` 改為 `RWC2026RubyTaiwan`（舊 COSCUP 的 proof code 不再有效）
+- `secret_pool` 裡的 `coscup` 換成 `matsue`
+- **個資收集開關**：`_config.yml` 的 `collect_personal_data`（預設 `false`）。關閉時結果頁直接進完成證明，跳過 form phase、不呼叫 Worker、不寄通知信；開啟才有表單 / listmonk 訂閱。JS 端靠 data island 的 `collectData`，`switchPhase('form')` 在關閉時會被導向 `proof`。
+
+### RWC 上線前待辦（基礎設施要新建，不沿用 COSCUP 的）
+
+- [x] DNS / CNAME 已設定（2026-11-17）
+- [x] listmonk 端已新建 list、API user、tx template
+- [x] list `RWC2026-Booth` ID 13、API user `rwc2026-booth-api-user` 已建（`worker.js` 已填 list ID 13）
+- [x] list UUID 已填 `_config.yml`；tx template ja=7 / en=8（原稿在 `workers/rwc2026-subscribe/templates/`，zh-TW 沿用 en）已填 `worker.js`
+- [ ] repo secrets：`CLOUDFLARE_API_TOKEN`、`LISTMONK_API_TOKEN`（新 user 的 token）；push 後 workflow 部署新 Worker，確認 `_config.yml` 的 `listmonk_submit_url` 與實際 Worker 網址一致
+- [ ] 用下方 curl 驗證 `mailed: true`（記得把網址換成 `rwc2026-subscribe`）
+- [ ] 現場前：EN/JA/PHP 完整流程實測；活動後清理舊 COSCUP Worker 與 listmonk 資源
+
+---
+
+以下為 **COSCUP 2026 前身版**的歷史紀錄（網域、worker、list ID 等皆為舊值，僅供參考）：
+
+## 前身狀態（COSCUP 2026，2026-08-02）
 
 本 repo 由 `rubytaiwan/sitcon2026-booth` 的 PR #2 branch（`claude/tender-sinoussi-e11ea1`，跨語言功能）直接遷移而來（push 保留完整 history，非 fork）。舊 repo 凍結於 SITCON 狀態，其 PR #2 尚未留言關閉。
 
 ### 已完成並上線
 
-- **部署**：`https://coscup2026.ruby.tw`（GitHub Pages + Actions，HTTPS 已強制；DNS 為 Cloudflare 灰雲 CNAME → `rubytaiwan.github.io`）
+- **部署**：`https://coscup2026.ruby.tw`（COSCUP 時期；GitHub Pages + Actions，HTTPS 已強制；DNS 為 Cloudflare 灰雲 CNAME → `rubytaiwan.github.io`）
 - **PR #2 feedback 四項必改**：
   - 玩家可見變數 `secret` → `gem`（題庫三語 + UI/eval 程式碼）
   - 題數 7+3 → **5+3 = 8**（2E+2M+1H；所有寫死的 `/10`、星星數、評語門檻已同步）
@@ -41,7 +64,7 @@ Jekyll 4.4.x static site for the COSCUP 2026 Ruby Taiwan booth challenge game. U
       Worker 現在回 `{ subscriber_id, created, mailed, lookup, steps[] }`，前端失敗時
       `console.warn('[subscribe] 未寄出', …)`，現場可直接從 DevTools 判斷哪一步掛掉。複驗：
       ```sh
-      curl -s -X POST https://coscup2026-subscribe.contact-db4.workers.dev \
+      curl -s -X POST https://rwc2026-subscribe.contact-db4.workers.dev \
         -H 'Content-Type: application/json' \
         -d '{"email":"you@example.com","name":"test","attribs":{"score":8,"total":8}}'
       ```
@@ -148,8 +171,8 @@ UI 字串走 data island 的 `ui` 欄位（同一份 YAML），在 JS 裡是 `UI
 
 ### listmonk Integration
 
-- Form POSTs to a Cloudflare Worker (`workers/coscup2026-subscribe/`) which relays to `edm.ruby.tw/api`; the Worker's `LISTMONK_LIST_ID` decides which list subscribers land in
-- Worker URL configured in `_config.yml` as `listmonk_submit_url`; CORS origin is locked to `https://coscup2026.ruby.tw`
+- Form POSTs to a Cloudflare Worker (`workers/rwc2026-subscribe/`) which relays to `edm.ruby.tw/api`; the Worker's `LISTMONK_LIST_ID` decides which list subscribers land in
+- Worker URL configured in `_config.yml` as `listmonk_submit_url`; CORS origin is locked to `https://rwc2026.ruby.tw`
 - Deploy the Worker with `wrangler deploy` from its directory (`LISTMONK_API_TOKEN` is a Worker secret)
 
 ## Tailwind CSS
