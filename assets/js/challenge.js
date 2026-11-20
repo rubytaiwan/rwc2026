@@ -888,9 +888,56 @@ function downloadCanvasImage(canvasId, filename) {
   a.click();
 }
 
-window.shareScoreCard  = () => shareCanvasImage('share-canvas', UI.share_filename, UI.share_title, tpl(UI.share_text, { n: correctCount, total: TOTAL_QUESTIONS }));
+// X：手機走系統分享表單（圖片一併帶過去，使用者選 X）；
+// 電腦沒辦法從網頁附圖，所以先下載圖片、再開 X 的發文頁，由使用者自己貼上圖。
+// ponytail: 不接 X / IG API（需 OAuth + 後端，IG 還要商業帳號）；有需要再加。
+// X 的發文網址（intent）只能預填文字、不能附圖，所以：
+//   手機：Web Share 分享表單，圖片直接進 X 的草稿，使用者按發文
+//   電腦：先把圖複製到剪貼簿，再開 X 發文視窗，使用者 Ctrl/Cmd+V 貼圖後按發文
+// 注意：window.open 與 clipboard.write 都必須在點擊當下「同步」呼叫，不能擺在 await 之後（會被擋）。
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  el.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%);max-width:90vw;background:#323232;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;line-height:1.5;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 7000);
+}
+
+function shareToX(canvasId, filename, title, text) {
+  const canvas  = document.getElementById(canvasId);
+  const blobP   = new Promise(r => canvas.toBlob(r, 'image/png'));
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile && navigator.share) {
+    return blobP.then(blob => {
+      const file = new File([blob], filename, { type: 'image/png' });
+      if (navigator.canShare?.({ files: [file] })) return navigator.share({ files: [file], title, text }).catch(() => {});
+      downloadCanvasImage(canvasId, filename);
+    });
+  }
+
+  // 電腦：同步開視窗（保住點擊授權），再同步呼叫 clipboard.write（吃 Promise 的 ClipboardItem）
+  const w = window.open('about:blank', '_blank');
+  if (w) w.opener = null;
+  let copied;
+  try {
+    copied = navigator.clipboard.write([new ClipboardItem({ 'image/png': blobP })]).then(() => true, (e) => { return false; });
+  } catch (_) { copied = Promise.resolve(false); }
+
+  return copied.then(ok => {
+    const url = `https://x.com/intent/post?text=${encodeURIComponent(text)}`;
+    if (w) w.location.href = url; else window.location.href = url;
+    if (ok) {
+      showToast(UI.share_x_pasted);
+    } else {
+      downloadCanvasImage(canvasId, filename);
+      showToast(UI.share_x_downloaded);
+    }
+  });
+}
+window.shareScoreCardToX = () => shareToX('share-canvas', UI.share_filename, UI.share_title, tpl(UI.share_text, { n: correctCount, total: TOTAL_QUESTIONS }));
 window.downloadCanvas  = () => downloadCanvasImage('share-canvas', UI.share_filename);
-window.shareOmikuji    = () => shareCanvasImage('omikuji-canvas', UI.omikuji_share_filename, UI.omikuji_share_title, tpl(UI.omikuji_share_text, { level: omikujiPick?.level ?? '' }));
+window.shareOmikuji    = () => shareToX('omikuji-canvas', UI.omikuji_share_filename, UI.omikuji_share_title, tpl(UI.omikuji_share_text, { level: omikujiPick?.level ?? '' }));
 window.downloadOmikuji = () => downloadCanvasImage('omikuji-canvas', UI.omikuji_share_filename);
 
 // ── Omikuji 御神籤 ────────────────────────────────────────
@@ -1035,17 +1082,6 @@ function renderProof() {
   document.getElementById('proof-total').textContent = ` / ${TOTAL_QUESTIONS}`;
   document.getElementById('proof-code').textContent  = code;
   document.getElementById('proof-time').textContent  = displayTime;
-
-  const qrEl = document.getElementById('proof-qrcode');
-  qrEl.innerHTML = '';
-  try {
-    const qr = window.qrcode(4, 'M');
-    qr.addData(code);
-    qr.make();
-    qrEl.innerHTML = qr.createSvgTag(4, 0);
-  } catch (e) {
-    qrEl.textContent = code;
-  }
 
   const clockEl = document.getElementById('proof-live-time');
   const tick = () => {
