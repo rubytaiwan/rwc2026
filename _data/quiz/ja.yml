@@ -12,41 +12,29 @@
 #   check:       code が無い問題用（任意）。選択肢を %s に代入して true になったものが正解。例: "%s.is_a?(Symbol)"
 #                正誤判定は mruby で実行して行います（code があれば code の実行結果＝選択肢の文字列、が正解）。
 
-- question: "次のコードを実行すると、何が表示されますか？"
-  code: |
-    p [1, 2, 3].map { |x| x * 2 }
-  answer: "[2, 4, 6]"
+- question: "Rubyを作ったのは誰ですか？"
+  answer: "まつもとゆきひろさん"
   wrong:
-    - "[1, 2, 3]"
-    - "[2, 4]"
-    - "[1, 4, 9]"
-  explanation: "map はブロックの結果を集めた新しい配列を返します。"
+    - "まつもとひろゆきさん"
+    - "上定昭仁さん"
+    - "丸山達也さん"
+  explanation: "上定昭仁さんは松江市長、丸山達也さんは島根県知事です。"
 
 - question: "次のコードを実行すると、何が表示されますか？"
   code: |
-    puts "ruby".upcase
-  answer: "RUBY"
+    puts "e-ztam".reverse.capitalize
+  answer: "Matz-e"
   wrong:
-    - "Ruby"
-    - "ruby"
-    - "nil"
-  explanation: "upcase は文字列をすべて大文字にします。"
+    - "E-ztam"
+    - "matz-e"
+    - "Matz-E"
+  explanation: "reverseは文字を逆順にし、capitalizeは先頭を大文字にします。"
 
-- question: "シンボル（Symbol）はどれですか？"
-  check: "%s.is_a?(Symbol)"
-  answer: ":matsue"
+- question: '"I love Spinel"を返すコードはどれですか？'
+  check: "(%s) == 'I love Spinel'"
+  answer: '"I love Ruby".sub("Ruby", "Spinel")'
   wrong:
-    - "\"matsue\""
-    - "matsue"
-    - "%w[matsue]"
-  explanation: "シンボルはコロン付きで書きます。同じシンボルは常に同一のオブジェクトです。"
-
-- question: "次のコードを実行すると、何が表示されますか？"
-  code: |
-    p 10.divmod(3)
-  answer: "[3, 1]"
-  wrong:
-    - "[3.33, 1]"
-    - "[1, 3]"
-    - "3"
-  explanation: "divmod は [商, 余り] の配列を返します。"
+    - '"I love Ruby".tr("Ruby", "Spinel")'
+    - '"I love Ruby".include?("Ruby")'
+    - '"I love Ruby" - "Ruby" + "Spinel"'
+  explanation: '"I love Ruby".tr("Ruby", "Spinel")は"I love Spin"になります。'
