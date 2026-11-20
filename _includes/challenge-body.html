@@ -1,4 +1,5 @@
 {% assign t = site.data.locales[page.lang] %}
+{% capture ph %}{% raw %}{c}{% endraw %}{% endcapture %}
 
 {% include cover.html %}
 
@@ -11,7 +12,7 @@
       <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: #bd3f32; font-weight: 600; margin: 0 0 8px;">{{ t.header_tag }}</p>
       <h2 style="font-size: 28px; font-weight: 700; color: #323232; margin: 0 0 8px;">{{ t.header_title }}</h2>
       {% if site.quiz_mode == 'choice' %}
-      <p style="color: #555; font-size: 15px; margin: 0;">{% if site.crosslang_enabled %}{{ t.header_subtitle_choice_cl }}{% else %}{{ t.header_subtitle_choice }}{% endif %}</p>
+      <p style="color: #555; font-size: 15px; margin: 0;">{% if site.crosslang_enabled %}{{ t.header_subtitle_choice_cl | replace: ph, site.choice_question_count }}{% else %}{{ t.header_subtitle_choice | replace: ph, site.choice_question_count }}{% endif %}</p>
       {% else %}
       <p style="color: #555; font-size: 15px; margin: 0;">{{ t.header_subtitle }}</p>
       {% endif %}
@@ -22,7 +23,7 @@
          ══════════════════════════════════════════ -->
     <div id="phase-progress" style="background: #fff; border: 1px solid #e8d5d3; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span id="progress-text" style="font-size: 13px; font-weight: 600; color: #323232;">{% if site.quiz_mode == 'choice' %}{% capture ph %}{% raw %}{c}{% endraw %}{% endcapture %}{{ t.choice_progress_init | replace: ph, site.choice_question_count }}{% else %}{{ t.quiz_progress_init }}{% endif %}</span>
+        <span id="progress-text" style="font-size: 13px; font-weight: 600; color: #323232;">{% if site.quiz_mode == 'choice' %}{{ t.choice_progress_init | replace: ph, site.choice_question_count }}{% else %}{{ t.quiz_progress_init }}{% endif %}</span>
         <span id="score-text" style="font-size: 13px; color: #16a34a; font-weight: 600;">{{ t.quiz_score_init }}</span>
       </div>
       <div style="background: #e8d5d3; border-radius: 4px; height: 8px; overflow: hidden;">
