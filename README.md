@@ -25,7 +25,7 @@ Ruby 基礎問題 5 問 + クロスランゲージ問題 3 問（JavaScript / Py
 3. **クロスランゲージ** — 元の言語のコードを見て、等価な Ruby を 4 択から選ぶ（3 問）
 4. **成績表** — 1080×1080 のスコアカード画像（Instagram 共有可）
 5. **フォーム** — ニックネーム・Email・電話・所属。Ruby Taiwan のニュースレター購読は任意
-6. **完了証明** — 合格コード + QR コード。RubyCity MATSUE ブースのスタッフに提示して記念品を受け取る
+6. **完了証明** — 合格コード + 結果画像の X シェア。RubyCity MATSUE ブースのスタッフに提示して記念品を受け取る
    🎋 おまけ：mruby WASM で「Ruby おみくじ」を引ける（共有可）
 
 ### 技術スタック
@@ -81,7 +81,7 @@ Players answer 5 Ruby basics questions + 3 cross-language questions (pick JavaSc
 3. **Cross-language** — read code in your language, pick the equivalent Ruby from 4 choices (3 questions)
 4. **Result** — 1080×1080 scorecard image, shareable to Instagram
 5. **Form** — nickname, email, phone, organization/school; optional Ruby Taiwan newsletter signup
-6. **Proof** — completion code + QR code; show it to RubyCity MATSUE booth staff for your gift
+6. **Proof** — completion code + share the result image to X; show it to RubyCity MATSUE booth staff for your gift
    🎋 Bonus: draw a "Ruby Omikuji" fortune powered by mruby WASM (shareable)
 
 ### Tech stack
@@ -137,7 +137,7 @@ RubyWorld Conference 2026 特別版：由 Ruby Taiwan 與 RubyCity MATSUE 合作
 3. **跨語言挑戰** — 看原語言程式碼，從 4 個選項選出等效的 Ruby（3 題）
 4. **成績單** — 1080×1080 成績卡圖片，可分享至 Instagram
 5. **填寫資料** — 暱稱、Email、手機、所屬組織或學校；可選訂閱 Ruby Taiwan 電子報
-6. **完成證明** — 通關代碼 + QR Code，出示給 RubyCity MATSUE 攤位工作人員領取小禮物
+6. **完成證明** — 通關代碼 + 結果圖片分享到 X，出示給 RubyCity MATSUE 攤位工作人員領取小禮物
    🎋 加碼：抽一支「Ruby 御神籤」，由 mruby WASM 抽出籤詩卡，可分享 IG
 
 ### 技術棧

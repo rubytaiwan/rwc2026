@@ -278,10 +278,10 @@
 
       <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 12px; flex-wrap: wrap;">
         <button
-          id="share-btn"
-          onclick="shareScoreCard()"
+          id="share-x-btn"
+          onclick="shareScoreCardToX()"
           style="background: #bd3f32; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-weight: 600; font-family: Montserrat, sans-serif; cursor: pointer;"
-        >{{ t.result_share_btn }}</button>
+        >{{ t.result_share_x_btn }}</button>
         <button
           onclick="downloadCanvas()"
           style="background: #fff; color: #bd3f32; border: 1px solid #bd3f32; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-family: Montserrat, sans-serif; cursor: pointer;"
@@ -385,9 +385,6 @@
           <span id="proof-total" style="font-size: 24px; opacity: 0.7;"> / 8</span>
         </div>
 
-        <!-- QR Code -->
-        <div id="proof-qrcode" style="background: #fff; border-radius: 12px; padding: 14px; display: inline-block; margin-bottom: 16px;"></div>
-
         <!-- Proof Code -->
         <p id="proof-code" style="font-family: monospace; font-size: 16px; letter-spacing: 2px; background: rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 16px; margin: 0 0 8px; word-break: break-all;"></p>
         <p id="proof-time" style="font-size: 11px; opacity: 0.6; margin: 0 0 28px; font-family: monospace;"></p>
@@ -407,7 +404,7 @@
           <canvas id="omikuji-canvas" width="1080" height="1080"
             style="max-width: 100%; height: auto; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.18); animation: omikuji-flip 0.8s ease-out;"></canvas>
           <div style="display: flex; gap: 10px; margin-top: 12px;">
-            <button onclick="shareOmikuji()" style="flex: 1; background: #bd3f32; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;">{{ t.result_share_btn }}</button>
+            <button onclick="shareOmikuji()" style="flex: 1; background: #bd3f32; color: #fff; border: none; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;">{{ t.result_share_x_btn }}</button>
             <button onclick="downloadOmikuji()" style="flex: 1; background: #fff; color: #323232; border: 2px solid #e5e5e5; border-radius: 8px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;">{{ t.result_download_btn }}</button>
           </div>
         </div>
