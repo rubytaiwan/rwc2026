@@ -26,6 +26,13 @@ listmonk_list_uuid: "d5fb3aff-d7af-4df4-bcfa-953dda560787"
 collect_personal_data: false
 listmonk_submit_url: "https://rwc2026-subscribe.contact-db4.workers.dev"
 
+# 出題モード：choice = 選択式クイズ（_data/quiz/<lang>.yml、前田さんが YAML だけで編集）
+#            legacy = 旧版（コード入力 5 問）
+quiz_mode: choice
+choice_question_count: 3
+# 選択式のあと、言語対照 3 問（_data/crosslang）も出すか。false にすると選択式だけで結果画面へ。
+crosslang_enabled: true
+
 webrick:
   mime_types:
     application/wasm: [wasm]

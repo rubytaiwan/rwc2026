@@ -24,6 +24,9 @@ const LISTMONK_LIST_UUID = CFG.listUuid;
 const LOGO_URL           = CFG.logoUrl;
 const WASM_URL           = CFG.wasmUrl;
 const PRELUDE            = CFG.prelude;    // _includes/mruby-prelude.rb
+const CHOICE_MODE        = CFG.quizMode === 'choice' && (CFG.choiceQuiz || []).length > 0; // _config.yml quiz_mode
+const CHOICE_DEFS        = CFG.choiceQuiz || [];  // _data/quiz/[lang].yml
+const CROSSLANG_ON       = !CHOICE_MODE || CFG.crosslangEnabled; // 選択式モードでは crosslang_enabled で切替
 
 // 插值 helper：tpl(UI.key, { n: value })
 function tpl(template, vars) {
@@ -33,10 +36,14 @@ function tpl(template, vars) {
 // ── 設定 ─────────────────────────────────────────────────
 const STANDARD_QUESTIONS = 5;
 const CROSSLANG_COUNT    = 3;
-const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 8
+const CHOICE_COUNT       = Math.min(CFG.choiceCount || 3, CHOICE_DEFS.length);
+const TOTAL_QUESTIONS    = CHOICE_MODE
+  ? CHOICE_COUNT + (CROSSLANG_ON ? CROSSLANG_COUNT : 0)
+  : STANDARD_QUESTIONS + CROSSLANG_COUNT; // legacy: 8
 const MAX_ATTEMPTS       = 3;
 // 跨語言題是 4 選 1，給 3 次等於 3/4 亂猜就中，所以只給 2 次（= 50%）
 const CROSSLANG_ATTEMPTS = 2;
+const CHOICE_ATTEMPTS    = 2; // 選択式も 4 択なので 2 回まで
 const SALT               = 'RWC2026RubyTaiwan';
 
 // ── secret 生成 ──────────────────────────────────────────
@@ -119,7 +126,7 @@ function buildCrosslangQuestion(def, lang) {
 }
 
 // ── State persistence（sessionStorage）────────────────────
-const SAVE_KEY = `ruby_quiz_v1_${PAGE_LANG}`;
+const SAVE_KEY = CHOICE_MODE ? `ruby_quiz_choice_v1_${PAGE_LANG}` : `ruby_quiz_v1_${PAGE_LANG}`;
 let quizMeta = [];
 
 function saveState() {
@@ -129,6 +136,7 @@ function saveState() {
       ca: currentAttempts, name: playerName, ts: proofTs,
       meta: quizMeta, lang: selectedLang,
       clIds: crosslangIds, cli: crosslangIndex,
+      chIds: choiceIds, chi: choiceIndex,
     }));
   } catch (_) {}
 }
@@ -172,18 +180,22 @@ let crosslangQuestions = [];
 let crosslangIndex    = 0;
 let crosslangAttempts = 0;
 let crosslangIds   = [];
+let choiceQuestions = [];
+let choiceIds      = [];
+let choiceIndex    = 0;
+let choiceAttempts = 0;
 
 // ── Phase 切換 ────────────────────────────────────────────
 window.switchPhase = function (name) {
   if (name === 'form' && !COLLECT_DATA) name = 'proof'; // 含還原舊存檔的情況
-  const allPhases = ['quiz', 'lang-select', 'crosslang', 'result', 'form', 'proof'];
+  const allPhases = ['quiz', 'choice', 'lang-select', 'crosslang', 'result', 'form', 'proof'];
   allPhases.forEach(p => {
     const el = document.getElementById('phase-' + p);
     if (el) el.style.display = (p === name) ? '' : 'none';
   });
   // progress bar: show during quiz and crosslang only
   const progressEl = document.getElementById('phase-progress');
-  if (progressEl) progressEl.style.display = (name === 'quiz' || name === 'crosslang') ? '' : 'none';
+  if (progressEl) progressEl.style.display = (name === 'quiz' || name === 'choice' || name === 'crosslang') ? '' : 'none';
 
   currentPhase = name;
   window.scrollTo({ top: document.getElementById('challenge').offsetTop - 20, behavior: 'smooth' });
@@ -347,6 +359,196 @@ function showAnswerReveal(q) {
         puts gem${escHtml(q.answer)}
       </code>
     </div>`;
+}
+
+// ── 選択式クイズ（_data/quiz/[lang].yml）──────────────────
+// 選擇題一律交給 mruby 判定（VM 沒起來才退回 YAML 的 answer）：
+//   有 code  → 實跑 code，輸出等於選項文字就算對
+//   有 check → 把選項代入 check 的 %s，結果為 true 就算對（給沒有 code 的題目，例如「哪個是 Symbol」）
+//   都沒有   → 比對 YAML 的 answer
+function runCapture(src) {
+  return rubyVM.eval(`
+require 'stringio'
+$stdout = StringIO.new
+begin
+  ${src}
+  $stdout.string.chomp
+rescue SyntaxError => e
+  "SyntaxError: \#{e.message}"
+rescue => e
+  "\#{e.class}: \#{e.message}"
+ensure
+  $stdout = STDOUT
+end`).toString();
+}
+
+function judgeChoice(q, i) {
+  const opt = q.options[i];
+  if (!rubyVM) return opt.ok;
+  try {
+    if (q.def.code) {
+      const out = runCapture(String(q.def.code));
+      return !/^\w*(Error|Exception): /.test(out) && out.trim() === opt.text.trim();
+    }
+    if (q.def.check) {
+      return runCapture(`puts(${String(q.def.check).split('%s').join(opt.text)})`).trim() === 'true';
+    }
+  } catch (_) { /* 落到 YAML answer */ }
+  return opt.ok;
+}
+
+function buildChoiceQuestion(def) {
+  const options = [def.answer, ...(def.wrong || [])].map((text, i) => ({ text: String(text), ok: i === 0 }));
+  options.sort(() => Math.random() - 0.5);
+  return { def, options };
+}
+
+function renderChoiceQuestion(q) {
+  choiceAttempts = 0;
+  document.getElementById('choice-question').textContent = q.def.question;
+  const wrap = document.getElementById('choice-code-wrap');
+  const codeEl = document.getElementById('choice-code');
+  if (q.def.code) {
+    codeEl.textContent = String(q.def.code).replace(/\n$/, '');
+    codeEl.removeAttribute('data-highlighted');
+    if (window.hljs) { try { window.hljs.highlightElement(codeEl); } catch (_) {} }
+    wrap.style.display = '';
+  } else {
+    wrap.style.display = 'none';
+  }
+  document.getElementById('choice-choices').innerHTML = q.options.map((o, i) => `
+    <button type="button" id="ch-choice-${i}" onclick="pickChoice(${i})" style="${CHOICE_STYLE}"
+      onmouseover="if(!this.disabled){this.style.borderColor='#bd3f32';this.style.background='#fef6f0';}"
+      onmouseout="if(!this.disabled){this.style.borderColor='#e8d5d3';this.style.background='#fff';}">
+      <span style="flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#fef6f0;color:#bd3f32;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">${'ABCD'[i] || i + 1}</span>
+      <code style="font-family:'JetBrains Mono','Courier New',monospace;font-size:14px;color:#323232;word-break:break-word;">${escHtml(o.text)}</code>
+    </button>
+  `).join('');
+  document.getElementById('choice-feedback').style.display = 'none';
+  document.getElementById('choice-attempts-badge').textContent = '';
+}
+
+function updateProgressForChoice() {
+  const n = choiceIndex + 1;
+  document.getElementById('progress-text').textContent = tpl(UI.choice_progress, { n, total: choiceQuestions.length });
+  document.getElementById('score-text').textContent    = tpl(UI.quiz_score, { n: correctCount });
+  document.getElementById('progress-fill').style.width = (n / choiceQuestions.length * 100) + '%';
+}
+
+function lockChoices() {
+  document.querySelectorAll('#choice-choices button').forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+}
+
+function showChoiceFeedback(kind, remaining, q) {
+  const fp = document.getElementById('choice-feedback');
+  fp.style.display = 'block';
+  const exp = q && q.def.explanation
+    ? `<p style="font-size:13px;color:#555;margin:8px 0 0;line-height:1.6;">${escHtml(q.def.explanation)}</p>` : '';
+  if (kind === 'correct') {
+    fp.innerHTML = `<div style="background:#f0faf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px 20px;"><div style="display:flex;align-items:center;gap:12px;"><span style="font-size:24px;">🎉</span><span style="font-size:16px;font-weight:700;color:#15803d;">${UI.feedback_correct}</span></div>${exp}</div>`;
+  } else if (kind === 'wrong') {
+    fp.innerHTML = `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:12px;"><span style="font-size:20px;">❌</span><span style="font-size:14px;color:#9a3412;">${tpl(UI.feedback_wrong, { n: remaining })}</span></div>`;
+    document.getElementById('choice-attempts-badge').textContent = tpl(UI.feedback_attempts_remaining, { n: remaining });
+  } else {
+    let ai = q.options.findIndex((_, k) => judgeChoice(q, k));
+    if (ai < 0) ai = q.options.findIndex(o => o.ok);
+    const ans = q.options[ai].text;
+    fp.innerHTML = `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:16px 20px;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:18px;">😅</span><span style="font-size:14px;font-weight:700;color:#991b1b;">${UI.feedback_exhausted}</span></div><code style="font-family:monospace;font-size:14px;color:#7f1d1d;background:#fee2e2;border-radius:6px;padding:6px 12px;display:inline-block;">${escHtml(ans)}</code>${exp}</div>`;
+  }
+}
+
+function nextChoiceQuestion() {
+  choiceIndex++;
+  if (choiceIndex >= choiceQuestions.length) {
+    switchPhase(CROSSLANG_ON ? 'lang-select' : 'result');
+  } else {
+    updateProgressForChoice();
+    renderChoiceQuestion(choiceQuestions[choiceIndex]);
+    saveState();
+  }
+}
+
+window.pickChoice = function (i) {
+  const q   = choiceQuestions[choiceIndex];
+  const btn = document.getElementById('ch-choice-' + i);
+  if (!q || !btn || btn.disabled) return;
+
+  if (judgeChoice(q, i)) {
+    btn.style.borderColor = '#22c55e';
+    btn.style.background  = '#f0faf4';
+    lockChoices();
+    correctCount++;
+    document.getElementById('score-text').textContent = tpl(UI.quiz_score, { n: correctCount });
+    showChoiceFeedback('correct', 0, q);
+    setTimeout(nextChoiceQuestion, q.def.explanation ? 2600 : 1400);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.style.opacity = '0.45';
+  btn.style.background = '#faf7f5';
+  btn.style.cursor = 'default';
+  choiceAttempts++;
+  if (choiceAttempts >= CHOICE_ATTEMPTS) {
+    lockChoices();
+    let ci = q.options.findIndex((_, k) => judgeChoice(q, k));
+    if (ci < 0) ci = q.options.findIndex(o => o.ok);
+    const cb = document.getElementById('ch-choice-' + ci);
+    if (cb) { cb.style.opacity = '1'; cb.style.borderColor = '#22c55e'; cb.style.background = '#f0faf4'; }
+    showChoiceFeedback('exhausted', 0, q);
+    setTimeout(nextChoiceQuestion, 3800);
+  } else {
+    showChoiceFeedback('wrong', CHOICE_ATTEMPTS - choiceAttempts, q);
+  }
+};
+
+function bootChoice() {
+  let snap;
+  try { snap = JSON.parse(sessionStorage.getItem(SAVE_KEY)); } catch (_) {}
+  let restored = false;
+  if (snap && Array.isArray(snap.chIds) && snap.chIds.length > 0) {
+    const defs = snap.chIds.map(idx => CHOICE_DEFS[idx]).filter(Boolean);
+    if (defs.length === snap.chIds.length) {
+      choiceIds       = snap.chIds;
+      choiceQuestions = defs.map(buildChoiceQuestion);
+      choiceIndex     = Math.min(snap.chi ?? 0, choiceQuestions.length - 1);
+      correctCount    = snap.cc   ?? 0;
+      playerName      = snap.name ?? '';
+      proofTs         = snap.ts   ?? '';
+      selectedLang    = snap.lang ?? '';
+      currentPhase    = snap.phase ?? 'choice';
+      restored = true;
+    }
+  }
+  if (!restored) {
+    choiceIds = CHOICE_DEFS.map((_, idx) => idx).sort(() => Math.random() - 0.5).slice(0, CHOICE_COUNT);
+    choiceQuestions = choiceIds.map(idx => buildChoiceQuestion(CHOICE_DEFS[idx]));
+    currentPhase = 'choice';
+  }
+
+  if (CROSSLANG_ON && selectedLang && Array.isArray(snap?.clIds) && snap.clIds.length > 0) {
+    const pool = CROSSLANG_DEFS[selectedLang] || [];
+    const rs = snap.clIds.map(id => pool.find(d => d.id === id)).filter(Boolean);
+    if (rs.length === snap.clIds.length) {
+      crosslangIds = snap.clIds;
+      crosslangIndex = snap.cli ?? 0;
+      crosslangQuestions = rs.map(def => buildCrosslangQuestion(def, selectedLang));
+    } else if (currentPhase === 'crosslang') {
+      currentPhase = 'lang-select';
+    }
+  }
+  if (currentPhase === 'crosslang' && crosslangQuestions.length === 0) currentPhase = 'lang-select';
+  if (!CROSSLANG_ON && (currentPhase === 'lang-select' || currentPhase === 'crosslang')) currentPhase = 'result';
+
+  switchPhase(currentPhase);
+  if (currentPhase === 'choice') {
+    updateProgressForChoice();
+    renderChoiceQuestion(choiceQuestions[choiceIndex]);
+  } else if (currentPhase === 'crosslang') {
+    renderCrosslangQuestion(crosslangQuestions[Math.min(crosslangIndex, crosslangQuestions.length - 1)]);
+    updateProgressForCrosslang();
+  }
+  initRuby(); // 選択式の判定も mruby で行う
 }
 
 // ── crosslang 回饋 ────────────────────────────────────────
@@ -588,11 +790,12 @@ ${UI.ai_prompt_instruction}`;
 // ── Phase Result: Canvas 成績單 ───────────────────────────
 function renderResult() {
   const sub = document.getElementById('result-subtitle');
-  sub.textContent = correctCount >= 7
-    ? tpl(UI.result_great, { n: correctCount })
-    : correctCount >= 4
-    ? tpl(UI.result_good, { n: correctCount })
-    : tpl(UI.result_encourage, { n: correctCount });
+  const v = { n: correctCount, total: TOTAL_QUESTIONS };
+  sub.textContent = correctCount >= TOTAL_QUESTIONS * 0.85
+    ? tpl(UI.result_great, v)
+    : correctCount >= TOTAL_QUESTIONS * 0.5
+    ? tpl(UI.result_good, v)
+    : tpl(UI.result_encourage, v);
 
   document.fonts.ready.then(() => drawScoreCard());
 }
@@ -685,7 +888,7 @@ function downloadCanvasImage(canvasId, filename) {
   a.click();
 }
 
-window.shareScoreCard  = () => shareCanvasImage('share-canvas', UI.share_filename, UI.share_title, tpl(UI.share_text, { n: correctCount }));
+window.shareScoreCard  = () => shareCanvasImage('share-canvas', UI.share_filename, UI.share_title, tpl(UI.share_text, { n: correctCount, total: TOTAL_QUESTIONS }));
 window.downloadCanvas  = () => downloadCanvasImage('share-canvas', UI.share_filename);
 window.shareOmikuji    = () => shareCanvasImage('omikuji-canvas', UI.omikuji_share_filename, UI.omikuji_share_title, tpl(UI.omikuji_share_text, { level: omikujiPick?.level ?? '' }));
 window.downloadOmikuji = () => downloadCanvasImage('omikuji-canvas', UI.omikuji_share_filename);
@@ -829,6 +1032,7 @@ function renderProof() {
 
   document.getElementById('proof-name').textContent  = playerName || '';
   document.getElementById('proof-score').textContent = correctCount;
+  document.getElementById('proof-total').textContent = ` / ${TOTAL_QUESTIONS}`;
   document.getElementById('proof-code').textContent  = code;
   document.getElementById('proof-time').textContent  = displayTime;
 
@@ -924,6 +1128,7 @@ async function initRuby() {
 
 // ── 初始化 ────────────────────────────────────────────────
 (function () {
+  if (CHOICE_MODE) { bootChoice(); return; }
   let snap;
   try { snap = JSON.parse(sessionStorage.getItem(SAVE_KEY)); } catch (_) {}
 
