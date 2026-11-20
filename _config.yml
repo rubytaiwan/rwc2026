@@ -31,7 +31,7 @@ listmonk_submit_url: "https://rwc2026-subscribe.contact-db4.workers.dev"
 quiz_mode: choice
 choice_question_count: 3
 # 選択式のあと、言語対照 3 問（_data/crosslang）も出すか。false にすると選択式だけで結果画面へ。
-crosslang_enabled: true
+crosslang_enabled: false
 
 webrick:
   mime_types:
