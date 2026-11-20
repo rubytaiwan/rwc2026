@@ -10,7 +10,11 @@
     <div style="text-align: center; margin-bottom: 32px;">
       <p style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; color: #bd3f32; font-weight: 600; margin: 0 0 8px;">{{ t.header_tag }}</p>
       <h2 style="font-size: 28px; font-weight: 700; color: #323232; margin: 0 0 8px;">{{ t.header_title }}</h2>
+      {% if site.quiz_mode == 'choice' %}
+      <p style="color: #555; font-size: 15px; margin: 0;">{% if site.crosslang_enabled %}{{ t.header_subtitle_choice_cl }}{% else %}{{ t.header_subtitle_choice }}{% endif %}</p>
+      {% else %}
       <p style="color: #555; font-size: 15px; margin: 0;">{{ t.header_subtitle }}</p>
+      {% endif %}
     </div>
 
     <!-- ══════════════════════════════════════════
@@ -18,7 +22,7 @@
          ══════════════════════════════════════════ -->
     <div id="phase-progress" style="background: #fff; border: 1px solid #e8d5d3; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span id="progress-text" style="font-size: 13px; font-weight: 600; color: #323232;">{{ t.quiz_progress_init }}</span>
+        <span id="progress-text" style="font-size: 13px; font-weight: 600; color: #323232;">{% if site.quiz_mode == 'choice' %}{% capture ph %}{% raw %}{c}{% endraw %}{% endcapture %}{{ t.choice_progress_init | replace: ph, site.choice_question_count }}{% else %}{{ t.quiz_progress_init }}{% endif %}</span>
         <span id="score-text" style="font-size: 13px; color: #16a34a; font-weight: 600;">{{ t.quiz_score_init }}</span>
       </div>
       <div style="background: #e8d5d3; border-radius: 4px; height: 8px; overflow: hidden;">
@@ -239,6 +243,27 @@
     </div><!-- end phase-crosslang -->
 
     <!-- ══════════════════════════════════════════
+         PHASE CHOICE（選択式クイズ：_data/quiz/<lang>.yml）
+         ══════════════════════════════════════════ -->
+    <div id="phase-choice" style="display: none; max-width: 720px; margin: 0 auto;">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="background: #fff; border: 1px solid #e8d5d3; border-radius: 12px; padding: 20px 24px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="width: 24px; height: 24px; background: #bd3f32; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span style="color: #fff; font-size: 12px; font-weight: 700;">?</span>
+            </div>
+            <span style="font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #ede9fe; color: #7c3aed;">{{ t.choice_badge }}</span>
+          </div>
+          <p id="choice-question" style="font-size: 15px; color: #323232; margin: 0; line-height: 1.7; white-space: pre-line;"></p>
+          <pre id="choice-code-wrap" style="margin: 12px 0 0; border-radius: 8px; overflow-x: auto; display: none;"><code id="choice-code" class="language-ruby" style="font-size: 13px; line-height: 1.6;"></code></pre>
+        </div>
+        <div id="choice-choices" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <div style="display: flex; justify-content: flex-end;"><span id="choice-attempts-badge" style="font-size: 11px; color: #9b9b9b;"></span></div>
+        <div id="choice-feedback" style="display: none;"></div>
+      </div>
+    </div><!-- end phase-choice -->
+
+    <!-- ══════════════════════════════════════════
          PHASE RESULT
          ══════════════════════════════════════════ -->
     <div id="phase-result" style="display: none; max-width: 540px; margin: 0 auto; text-align: center;">
@@ -356,7 +381,7 @@
 
         <div style="font-size: 52px; font-weight: 800; margin: 0 0 20px; line-height: 1;">
           <span id="proof-score">0</span>
-          <span style="font-size: 24px; opacity: 0.7;"> / 8</span>
+          <span id="proof-total" style="font-size: 24px; opacity: 0.7;"> / 8</span>
         </div>
 
         <!-- QR Code -->
@@ -431,6 +456,10 @@
   "lang":      {{ page.lang | jsonify }},
   "ui":        {{ site.data.locales[page.lang] | jsonify | replace: '</', '<\/' }},
   "tasks":     {{ site.data.tasks[page.lang] | jsonify | replace: '</', '<\/' }},
+  "quizMode":  {{ site.quiz_mode | default: 'choice' | jsonify }},
+  "choiceQuiz": {{ site.data.quiz[page.lang] | default: empty_array | jsonify | replace: '</', '<\/' }},
+  "choiceCount": {{ site.choice_question_count | default: 3 | jsonify }},
+  "crosslangEnabled": {{ site.crosslang_enabled | default: false | jsonify }},
   "crosslang": {
     "javascript": {{ site.data.crosslang[page.lang].javascript | jsonify | replace: '</', '<\/' }},
     "python":     {{ site.data.crosslang[page.lang].python | jsonify | replace: '</', '<\/' }},

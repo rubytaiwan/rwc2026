@@ -222,6 +222,26 @@ for (const input of ['.foo', '.sort;', '.map { |x| x', '.chars.first(2)', '; whi
   console.log(`  ${String(input).padEnd(26)} => ${JSON.stringify(out.slice(0, 72))}`);
 }
 
+head('選擇題 _data/quiz（逐題逐選項實跑；必須剛好只有 YAML answer 判對）');
+{
+  const { execFileSync } = require_('node:child_process');
+  const judge = (q, text) => {
+    if (q.code) { const out = ev(quizWrapper(String(q.code))); return !/^\w*(Error|Exception): /.test(out) && out.trim() === text.trim(); }
+    if (q.check) return ev(quizWrapper(`puts(${String(q.check).split('%s').join(text)})`)).trim() === 'true';
+    return text === String(q.answer);
+  };
+  for (const lang of ['ja', 'en', 'zh-TW']) {
+    const rows = JSON.parse(execFileSync('ruby', ['-ryaml', '-rjson', '-e', 'puts YAML.load_file(ARGV[0]).to_json', join(ROOT, `_data/quiz/${lang}.yml`)]).toString());
+    rows.forEach((q, n) => {
+      const opts = [String(q.answer), ...(q.wrong || []).map(String)];
+      if (opts.length !== 4) return bad(`${lang} #${n + 1} 選項不是 4 個`);
+      const ok = opts.filter((t) => judge(q, t));
+      if (ok.length !== 1 || ok[0] !== String(q.answer)) bad(`${lang} #${n + 1} 判對的是 ${JSON.stringify(ok)}，應該只有 ${JSON.stringify(String(q.answer))}`);
+      else console.log(`  ok   ${lang} #${n + 1} ${q.code ? 'code ' : q.check ? 'check' : 'yaml '} => ${q.answer}`);
+    });
+  }
+}
+
 head('體積');
 for (const f of ['assets/ruby-wasm/mruby.js', 'assets/ruby-wasm/mruby.wasm']) {
   const buf = readFileSync(join(ROOT, f));

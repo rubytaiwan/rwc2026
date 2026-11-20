@@ -215,3 +215,13 @@ Tailwind v4 has no `tailwind.config.js`; all config lives in `_css/input.css`.
    的 `question` 仍用 `{secret}` 單大括號（Liquid 不碰單大括號）。
 
 `?v={{ site.time | date: '%s' }}` 是 build 時間當版號，避免現場 deploy 後訪客拿到快取裡的舊 JS。
+
+## 選択式モード（2026-11-20）
+
+- `_config.yml`：`quiz_mode: choice`（`legacy` で旧 5 問コード入力版に戻る）、`choice_question_count: 3`、`crosslang_enabled: true|false`。
+- 題庫：`_data/quiz/{ja,en,zh-TW}.yml`（question / code(任意) / answer / wrong×3 / explanation(任意)）。前田さんは YAML だけ編集すればよい。題數 > 3 時は毎回ランダム抽出。現在は動作確認用プレースホルダー 4 問。
+- JS：`challenge.js` の `bootChoice` / `pickChoice` / `phase-choice`（challenge-body.html）。4 択は 2 回まで、尽きたら正解表示。`TOTAL_QUESTIONS` は動的（選択式 3 ＋ crosslang 有効なら 3）、結果の評価は割合（≥85% / ≥50%）。
+- 正誤判定は**選択式も mruby で実行**する（`judgeChoice`）：`code` があれば実行結果＝選択肢の文字列が正解、`code` が無い問題は `check`（選択肢を `%s` に代入して `true` になれば正解。例 `"%s.is_a?(Symbol)"`）、どちらも無ければ YAML の `answer`。VM が起動していない時だけ `answer` にフォールバック。`crosslang_enabled: false` でも mruby WASM は読み込む。
+- `tools/mruby-wasm/spike.mjs`（CI の mruby-gate）が `_data/quiz` の全選択肢を実行し、「判定が正解になるのは `answer` だけ」を検査する（`ruby` が必要）。
+- 日本語版タイトルは原題「Ruby 互動煉金術」に戻した（市の提案 11/17）。
+- 未確定：「3 問答え終わり＝通関」の定義と、300 個の記念品の確認方法（市に質問中）。

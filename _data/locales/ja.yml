@@ -1,7 +1,7 @@
 # ── 日本語 (ja) UI 文字列 ─────────────────────────────────
 
 # ── Meta ──
-site_title: "Ruby インタラクティブ錬金術 | RubyWorld Conference 2026 特別版"
+site_title: "Ruby 互動煉金術 | RubyWorld Conference 2026 特別版"
 html_lang: "ja"
 date_locale: "ja-JP"
 
@@ -10,12 +10,17 @@ cover_event: "RubyWorld Conference 2026 特別版"
 cover_anniv: "RubyCity MATSUE 20周年記念"
 
 # ── Section Header ──
-header_tag: "// RUBYCITY MATSUE 20周年記念 · RUBY インタラクティブ錬金術"
+header_tag: "// RUBYCITY MATSUE 20周年記念 · RUBY 互動煉金術"
 header_title: "今日から Ruby を始めよう"
 header_subtitle: "Ruby基礎5問 + 言語対照3問、本物のコードを実行して、RubyCity MATSUE ブースでギフトをもらおう！"
 
 # ── Quiz Phase (HTML) ──
 quiz_progress_init: "第 1 / 5 問"
+header_subtitle_choice: "Ruby 選択式クイズ{c}問、本物のコードを読んで、RubyCity MATSUE ブースでギフトをもらおう！"
+header_subtitle_choice_cl: "Ruby 選択式クイズ{c}問 + 言語対照3問、本物のコードを読んで、RubyCity MATSUE ブースでギフトをもらおう！"
+choice_progress_init: "第 1 / {c} 問"
+choice_progress: "第 {n} / {total} 問"
+choice_badge: "選択式"
 quiz_score_init: "⭐ 0 問正解"
 quiz_loading: "読み込み中…"
 quiz_input_placeholder: ".メソッド名"
@@ -55,9 +60,9 @@ feedback_exhausted: "チャンス終了。正解は："
 
 # ── Result Phase ──
 result_title: "🎉 チャレンジ完了！"
-result_great: "すごい！{n}/8 全問正解 🔥"
-result_good: "{n}/8 正解、Ruby の実力が上がった！"
-result_encourage: "{n}/8 正解、引き続き頑張ろう！"
+result_great: "すごい！{n}/{total} 全問正解 🔥"
+result_good: "{n}/{total} 正解、Ruby の実力が上がった！"
+result_encourage: "{n}/{total} 正解、引き続き頑張ろう！"
 result_share_btn: "📲 IG にシェア"
 result_download_btn: "⬇️ 画像をダウンロード"
 result_tag_reminder: "シェアするときは <strong>@rubytaiwan2008</strong> をタグ付けしてね！"
@@ -66,12 +71,12 @@ result_next_btn: "次へ → 情報を入力してギフトをもらう"
 
 # ── Canvas Scorecard (fillText) ──
 canvas_top_label: "RUBYWORLD 2026 × RUBY TAIWAN"
-canvas_tagline: "Ruby インタラクティブ錬金術"
+canvas_tagline: "Ruby 互動煉金術"
 canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
-share_title: "Ruby インタラクティブ錬金術 — RubyWorld Conference 2026"
-share_text: "RubyWorld Conference 2026 の Ruby チャレンジを完了！{n}/8 問正解 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_title: "Ruby 互動煉金術 — RubyWorld Conference 2026"
+share_text: "RubyWorld Conference 2026 の Ruby チャレンジを完了！{n}/{total} 問正解 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
 share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──
