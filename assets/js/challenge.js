@@ -31,9 +31,9 @@ function tpl(template, vars) {
 }
 
 // ── 設定 ─────────────────────────────────────────────────
-const STANDARD_QUESTIONS = 5;
+const STANDARD_QUESTIONS = 3;
 const CROSSLANG_COUNT    = 3;
-const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 8
+const TOTAL_QUESTIONS    = STANDARD_QUESTIONS + CROSSLANG_COUNT; // 6
 const MAX_ATTEMPTS       = 3;
 // 跨語言題是 4 選 1，給 3 次等於 3/4 亂猜就中，所以只給 2 次（= 50%）
 const CROSSLANG_ATTEMPTS = 2;
@@ -137,7 +137,7 @@ function clearSavedState() {
   try { sessionStorage.removeItem(SAVE_KEY); } catch (_) {}
 }
 
-// ── 5 題梯度出題 (2E + 2M + 1H) ──────────────────────────
+// ── 3 題梯度出題 (1E + 1M + 1H) ──────────────────────────
 let quizQuestions = [];
 
 function prepareQuiz(restoredMeta) {
@@ -151,8 +151,8 @@ function prepareQuiz(restoredMeta) {
   const medIdx  = TASK_DEFS.flatMap((t, i) => t.difficulty === 'medium' ? [i] : []);
   const hardIdx = TASK_DEFS.flatMap((t, i) => t.difficulty === 'hard'   ? [i] : []);
   const selected = [
-    ...pickIdx(easyIdx, Math.min(2, easyIdx.length)),
-    ...pickIdx(medIdx,  Math.min(2, medIdx.length)),
+    ...pickIdx(easyIdx, Math.min(1, easyIdx.length)),
+    ...pickIdx(medIdx,  Math.min(1, medIdx.length)),
     ...pickIdx(hardIdx, Math.min(1, hardIdx.length)),
   ];
   quizMeta      = selected.map(di => ({ di, raw: generateSecret(TASK_DEFS[di]) }));
@@ -588,9 +588,9 @@ ${UI.ai_prompt_instruction}`;
 // ── Phase Result: Canvas 成績單 ───────────────────────────
 function renderResult() {
   const sub = document.getElementById('result-subtitle');
-  sub.textContent = correctCount >= 7
+  sub.textContent = correctCount >= 6
     ? tpl(UI.result_great, { n: correctCount })
-    : correctCount >= 4
+    : correctCount >= 3
     ? tpl(UI.result_good, { n: correctCount })
     : tpl(UI.result_encourage, { n: correctCount });
 

@@ -11,10 +11,10 @@ header_title: "學 Ruby，從今天開始"
 header_subtitle: "5 題 Ruby 基礎 + 3 題跨語言對照，執行真實 Ruby 程式碼，完成後領取小禮物！"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "第 1 / 5 題"
+quiz_progress_init: "第 1 / 3 題"
 quiz_score_init: "⭐ 0 題答對"
 quiz_loading: "載入中…"
-quiz_input_placeholder: ".方法名稱"
+quiz_input_placeholder: ".方法"
 quiz_run_btn: "▶ 執行 Ruby"
 quiz_ask_ai_btn: "✨ 詢問 AI"
 quiz_wasm_status_init: "⏳ 載入 mruby WASM…"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "真實 mruby 4.0 在瀏覽器中執行"
 quiz_output_waiting: "等待執行…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "第 {n} / 5 題"
+quiz_progress: "第 {n} / 3 題"
 crosslang_progress: "跨語言 {n} / 3 題"
 quiz_score: "⭐ {n} 題答對"
 diff_easy: "Easy"
@@ -51,9 +51,9 @@ feedback_exhausted: "機會用完，答案是："
 
 # ── Result Phase ──
 result_title: "🎉 挑戰完成！"
-result_great: "太厲害了！{n}/8 全都難不倒你 🔥"
-result_good: "答對 {n}/8 題，Ruby 功力大增！"
-result_encourage: "答對 {n}/8 題，繼續加油！"
+result_great: "太厲害了！{n}/6 全都難不倒你 🔥"
+result_good: "答對 {n}/6 題，Ruby 功力大增！"
+result_encourage: "答對 {n}/6 題，繼續加油！"
 result_share_btn: "📲 分享到 IG"
 result_download_btn: "⬇️ 下載圖片"
 result_tag_reminder: "分享後記得 tag <strong>@rubytaiwan2008</strong> 喔！"
@@ -67,7 +67,7 @@ canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
 share_title: "Ruby 互動煉金術 — RubyWorld Conference 2026"
-share_text: "我在 RubyWorld Conference 2026 完成了 Ruby 挑戰！答對 {n}/8 題 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_text: "我在 RubyWorld Conference 2026 完成了 Ruby 挑戰！答對 {n}/6 題 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
 share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──

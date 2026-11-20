@@ -11,10 +11,10 @@ header_title: "今日から Ruby を始めよう"
 header_subtitle: "Ruby基礎5問 + 言語対照3問、本物のコードを実行して、RubyCity MATSUE ブースでギフトをもらおう！"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "第 1 / 5 問"
+quiz_progress_init: "第 1 / 3 問"
 quiz_score_init: "⭐ 0 問正解"
 quiz_loading: "読み込み中…"
-quiz_input_placeholder: ".メソッド名"
+quiz_input_placeholder: ".メソッド"
 quiz_run_btn: "▶ Ruby を実行"
 quiz_ask_ai_btn: "✨ AI に聞く"
 quiz_wasm_status_init: "⏳ mruby WASM 読み込み中…"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "本物の mruby 4.0 がブラウザで動く"
 quiz_output_waiting: "実行待ち…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "第 {n} / 5 問"
+quiz_progress: "第 {n} / 3 問"
 crosslang_progress: "言語対照 {n} / 3 問"
 quiz_score: "⭐ {n} 問正解"
 diff_easy: "Easy"
@@ -51,9 +51,9 @@ feedback_exhausted: "チャンス終了。正解は："
 
 # ── Result Phase ──
 result_title: "🎉 チャレンジ完了！"
-result_great: "すごい！{n}/8 全問正解 🔥"
-result_good: "{n}/8 正解、Ruby の実力が上がった！"
-result_encourage: "{n}/8 正解、引き続き頑張ろう！"
+result_great: "すごい！{n}/6 全問正解 🔥"
+result_good: "{n}/6 正解、Ruby の実力が上がった！"
+result_encourage: "{n}/6 正解、引き続き頑張ろう！"
 result_share_btn: "📲 IG にシェア"
 result_download_btn: "⬇️ 画像をダウンロード"
 result_tag_reminder: "シェアするときは <strong>@rubytaiwan2008</strong> をタグ付けしてね！"
@@ -67,7 +67,7 @@ canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
 share_title: "Ruby インタラクティブ錬金術 — RubyWorld Conference 2026"
-share_text: "RubyWorld Conference 2026 の Ruby チャレンジを完了！{n}/8 問正解 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_text: "RubyWorld Conference 2026 の Ruby チャレンジを完了！{n}/6 問正解 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
 share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──

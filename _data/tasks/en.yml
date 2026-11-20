@@ -1,219 +1,52 @@
 # ── Ruby Interactive Challenge Questions (English) ──────────
 #
-# Cultural references adapted for international audiences.
-# answer, secret_type, difficulty, tips[].code are unchanged.
-# Only: question, category, tips[].desc are translated/adapted.
+# Mirrors the Japanese bank (ja.yml): one question per difficulty.
+# secret_type, secret_pool, answer and tips[].code match ja.yml;
+# only question, category and tips[].desc are in English.
 # ─────────────────────────────────────────────────────────────
 
 # ── Easy ─────────────────────────────────────────────────────
 
-# Task 1: Sort
-- category: Array Operations
-  difficulty: easy
-  secret_type: array
-  array_length: 5
-  element_range: [1, 20]
-  question: "Get your act together! Sort gem from smallest to largest."
-  answer: ".sort"
-  tips:
-    - { code: "[3,1,2].sort", desc: "Sort ascending" }
-    - { code: "[3,1,2].sort.reverse", desc: "Sort descending" }
-    - { code: "[3,1,2].min", desc: "Minimum value" }
-    - { code: "[3,1,2].max", desc: "Maximum value" }
-
-# Task 2: Pop
-- category: Array Operations
-  difficulty: easy
-  secret_type: array
-  array_length: 4
-  element_range: [1, 9]
-  question: "Last one out! Remove and return the last element of gem."
-  answer: ".pop"
-  tips:
-    - { code: "[1,2,3].pop", desc: "Remove and return last element" }
-    - { code: "[1,2,3].shift", desc: "Remove and return first element" }
-    - { code: "[1,2,3].last", desc: "Peek at last (no removal)" }
-    - { code: "[1,2,3].first", desc: "Peek at first (no removal)" }
-
-# Task 3: Chars
+# Task 1: Case conversion
 - category: String Operations
   difficulty: easy
   secret_type: string
-  secret_pool: [ruby, matsue, meme, code, wasm]
-  question: "Break it apart! Split gem into individual characters."
-  answer: ".chars"
+  secret_pool: ["ruby", "spinel"]
+  question: "Convert every character of gem to uppercase."
+  answer: ".upcase"
   tips:
-    - { code: '"hello".chars', desc: "Split into character array" }
-    - { code: '"hello".bytes', desc: "Split into byte array" }
-    - { code: '"hello".length', desc: "String length" }
-    - { code: '"hello".reverse', desc: "Reverse the string" }
-
-# Task 4: Positive?
-- category: Number Operations
-  difficulty: easy
-  secret_type: integer
-  secret_range: [1, 100]
-  question: "Good vibes only! Is gem a positive number?"
-  answer: ".positive?"
-  tips:
-    - { code: "42.positive?", desc: "Is it positive?" }
-    - { code: "-1.negative?", desc: "Is it negative?" }
-    - { code: "0.zero?", desc: "Is it zero?" }
-    - { code: "42.even?", desc: "Is it even?" }
-
-# Task 5: Empty?
-- category: String Operations
-  difficulty: easy
-  secret_type: string
-  secret_pool: ["", "ruby", "", "matsue"]
-  question: "Wait... is there anything in gem? Check if it's empty!"
-  answer: ".empty?"
-  tips:
-    - { code: '"".empty?', desc: "Empty string → true" }
-    - { code: '"hello".empty?', desc: "Non-empty → false" }
-    - { code: "[].empty?", desc: "Empty array → true" }
-    - { code: '"hello".nil?', desc: "String is not nil → false" }
-
+    - { code: '"Hello".downcase', desc: 'Returns "hello"' }
+    - { code: '"Hello".upcase', desc: 'Returns "HELLO"' }
+    - { code: '"Hello".swapcase', desc: 'Returns "hELLO"' }
+    - { code: '"hello".capitalize', desc: 'Returns "Hello"' }
 
 ### Medium
 
-
-# Task 6: Shuffle
-- category: Array Operations
-  difficulty: medium
-  secret_type: array
-  array_length: 5
-  element_range: [1, 20]
-  question: "Shuffle the deck! Randomize the order of elements in gem."
-  answer: ".shuffle"
-  tips:
-    - { code: "[1,2,3].shuffle", desc: "Randomize order" }
-    - { code: "[1,2,3].sort", desc: "Sort (restore order)" }
-    - { code: "[1,2,3].reverse", desc: "Reverse order" }
-    - { code: "[1,2,3].rotate", desc: "Rotate elements" }
-
-# Task 7: Freeze
-- category: Object Operations
+# Task 2: Remove space characters
+- category: String Operations
   difficulty: medium
   secret_type: string
-  secret_pool: [ruby, matsue, meme, hello, world]
-  question: "Hard lock! Freeze gem so it can never be modified again."
-  answer: ".freeze"
+  secret_pool: [" Ruby City Matsue "]
+  question: "Remove all space characters from gem."
+  answer: '.delete(" ")'
   tips:
-    - { code: '"hello".freeze', desc: "Freeze a string" }
-    - { code: '"hello".frozen?', desc: "Check if frozen" }
-    - { code: '"hello".dup', desc: "Duplicate (unfreezes)" }
-    - { code: "42.frozen?", desc: "Numbers are always frozen" }
-
-# Task 8: Rotate
-- category: Array Operations
-  difficulty: medium
-  secret_type: array
-  array_length: 5
-  element_range: [1, 9]
-  question: "Musical chairs! Move the first element of gem to the back of the line."
-  answer: ".rotate"
-  tips:
-    - { code: "[1,2,3].rotate", desc: "Rotate by one position" }
-    - { code: "[1,2,3].rotate(2)", desc: "Rotate by two positions" }
-    - { code: "[1,2,3].reverse", desc: "Reverse the array" }
-    - { code: "[1,2,3].shuffle", desc: "Randomize order" }
-
-# Task 9: Zero?
-- category: Number Operations
-  difficulty: medium
-  secret_type: integer
-  secret_range: [0, 0]
-  question: "Absolutely nothing! Check if gem is zero."
-  answer: ".zero?"
-  tips:
-    - { code: "0.zero?", desc: "Zero → true" }
-    - { code: "42.zero?", desc: "Not zero → false" }
-    - { code: "0.nil?", desc: "Zero is not nil → false" }
-    - { code: "0.positive?", desc: "Zero is not positive → false" }
-
-# Task 10: Sample
-- category: Array Operations
-  difficulty: medium
-  secret_type: array
-  array_length: 5
-  element_range: [1, 99]
-  question: "Pick a card, any card! Randomly draw one element from gem."
-  answer: ".sample"
-  tips:
-    - { code: "[1,2,3].sample", desc: "Pick one at random" }
-    - { code: "[1,2,3].sample(2)", desc: "Pick two at random" }
-    - { code: "[1,2,3].shuffle", desc: "Shuffle all elements" }
-    - { code: "[1,2,3].first", desc: "Take the first element" }
-
+    - { code: '" a b ".lstrip', desc: 'Returns "a b "' }
+    - { code: '" a b ".rstrip', desc: 'Returns " a b"' }
+    - { code: '" a b ".strip', desc: 'Returns "a b"' }
+    - { code: '"abaca".delete("a")', desc: 'Returns "bc"' }
 
 ### Hard
 
-
-# Task 11: Dup
-- category: Object Operations
-  difficulty: hard
-  secret_type: string
-  secret_pool: [ruby, matsue, meme, kaigi]
-  question: "Copy-paste time! Make an independent duplicate of gem."
-  answer: ".dup"
-  tips:
-    - { code: '"hello".dup', desc: "Duplicate an object" }
-    - { code: '"hello".clone', desc: "Deep clone (preserves frozen state)" }
-    - { code: '"hello".freeze', desc: "Freeze an object" }
-    - { code: '"hello".object_id', desc: "Unique object identifier" }
-
-# Task 12: Abs
-- category: Number Operations
-  difficulty: hard
-  secret_type: integer
-  secret_range: [-99, -1]
-  question: "Flip the negativity! Convert gem to its absolute value."
-  answer: ".abs"
-  tips:
-    - { code: "(-42).abs", desc: "Absolute value → 42" }
-    - { code: "-42.negative?", desc: "Is it negative?" }
-    - { code: "42.positive?", desc: "Is it positive?" }
-    - { code: "(-42) * -1", desc: "Multiply by -1 also works" }
-
-# Task 13: Inspect
-- category: Object Operations
-  difficulty: hard
-  secret_type: string
-  secret_pool: [ruby, matsue, meme, kaigi]
-  question: "Look closely! Reveal the true internal representation of gem."
-  answer: ".inspect"
-  tips:
-    - { code: '"hello".inspect', desc: '→ "\"hello\""' }
-    - { code: "42.inspect", desc: '→ "42"' }
-    - { code: "[1,2].inspect", desc: '→ "[1, 2]"' }
-    - { code: "nil.inspect", desc: '→ "nil"' }
-
-# Task 14: To_sym
-- category: Type Exploration
-  difficulty: hard
-  secret_type: string
-  secret_pool: [ruby, love, live, idol]
-  question: "Symbolize it! Convert gem from a String into a Symbol."
-  answer: ".to_sym"
-  tips:
-    - { code: '"hello".to_sym', desc: "String → Symbol" }
-    - { code: ":hello.to_s", desc: "Symbol → String" }
-    - { code: '"hello".class', desc: "→ String" }
-    - { code: ":hello.class", desc: "→ Symbol" }
-
-# Task 15: Flatten
+# Task 3: Map
 - category: Array Operations
   difficulty: hard
-  secret_type: nested_array
-  secret_pool:
-    - [[1, 2], [3, [4, 5]], [6]]
-    - [[7, [8]], [9, 10], [[11]]]
-    - [[1], [2, [3, [4]]], [5]]
-  question: "Flatten it out! Turn gem's nested arrays into one flat array."
-  answer: ".flatten"
+  secret_type: array
+  array_length: 5
+  element_range: [1, 100]
+  question: "Double every element of gem."
+  answer: ".map { |i| i * 2 }"
   tips:
-    - { code: "[[1,2],[3,4]].flatten", desc: "Flatten nested arrays" }
-    - { code: "[[1,[2]],3].flatten(1)", desc: "Flatten only one level" }
-    - { code: "[1,2,3].compact", desc: "Remove nil elements" }
-    - { code: "[1,[2,3]].first", desc: "Get first element" }
+    - { code: "[1, 2, 3].each { |i| p i }", desc: "Prints 1, 2 and 3, one per line" }
+    - { code: "[1, 2, 3].map { |i| i.to_s }", desc: 'Returns ["1", "2", "3"]' }
+    - { code: "[1, 2, 3].filter { |i| i &lt; 3 }", desc: 'Returns [1, 2]' }
+    - { code: "15 * 2", desc: 'Returns 30' }

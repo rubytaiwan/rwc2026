@@ -11,10 +11,10 @@ header_title: "Start Learning Ruby Today"
 header_subtitle: "5 Ruby basics + 3 cross-language questions — run real Ruby code and claim your gift at the RubyCity MATSUE booth!"
 
 # ── Quiz Phase (HTML) ──
-quiz_progress_init: "Q 1 / 5"
+quiz_progress_init: "Q 1 / 3"
 quiz_score_init: "⭐ 0 correct"
 quiz_loading: "Loading…"
-quiz_input_placeholder: ".method_name"
+quiz_input_placeholder: ".method"
 quiz_run_btn: "▶ Run Ruby"
 quiz_ask_ai_btn: "✨ Ask AI"
 quiz_wasm_status_init: "⏳ Loading mruby WASM…"
@@ -25,7 +25,7 @@ quiz_powered_by_desc: "Real mruby 4.0 running in your browser"
 quiz_output_waiting: "Waiting for output…"
 
 # ── Quiz Phase (JS dynamic) ──
-quiz_progress: "Q {n} / 5"
+quiz_progress: "Q {n} / 3"
 crosslang_progress: "Cross-lang {n} / 3"
 quiz_score: "⭐ {n} correct"
 diff_easy: "Easy"
@@ -51,9 +51,9 @@ feedback_exhausted: "No attempts left. The answer is:"
 
 # ── Result Phase ──
 result_title: "🎉 Challenge Complete!"
-result_great: "Amazing! {n}/8 — nothing could stop you 🔥"
-result_good: "Got {n}/8 — your Ruby skills are leveling up!"
-result_encourage: "Got {n}/8 — keep it up!"
+result_great: "Amazing! {n}/6 — nothing could stop you 🔥"
+result_good: "Got {n}/6 — your Ruby skills are leveling up!"
+result_encourage: "Got {n}/6 — keep it up!"
 result_share_btn: "📲 Share to IG"
 result_download_btn: "⬇️ Download"
 result_tag_reminder: "Remember to tag <strong>@rubytaiwan2008</strong> when you share!"
@@ -67,7 +67,7 @@ canvas_hashtags: "@rubytaiwan2008  #rubyworld #rubycity #rubytaiwan"
 
 # ── Web Share API ──
 share_title: "Ruby Interactive Alchemy — RubyWorld Conference 2026"
-share_text: "I completed the Ruby challenge at RubyWorld Conference 2026! Got {n}/8 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
+share_text: "I completed the Ruby challenge at RubyWorld Conference 2026! Got {n}/6 @rubytaiwan2008 #rubyworld #rubycity #rubytaiwan"
 share_filename: "ruby-challenge-rwc2026.png"
 
 # ── Form Phase ──
