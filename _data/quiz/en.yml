@@ -1,44 +1,33 @@
 #   check:       (optional) for questions without code. The option is substituted for %s; the one that evaluates to true is correct. e.g. "%s.is_a?(Symbol)"
 #                Answers are judged by running Ruby in mruby (with code: the option equal to the program's output is correct).
 # ── Ruby multiple-choice quiz (English) ─────────────────────
-# Field reference: see ja.yml. The 4 questions below are placeholders — edit or add freely.
+# The 3 questions below mirror ja.yml — edit or add freely.
 # With more than 3 questions, each player gets a random 3 (choice_question_count in _config.yml).
 
-- question: "What does this code print?"
-  code: |
-    p [1, 2, 3].map { |x| x * 2 }
-  answer: "[2, 4, 6]"
+
+- question: "Who created Ruby?"
+  answer: "Yukihiro Matsumoto"
   wrong:
-    - "[1, 2, 3]"
-    - "[2, 4]"
-    - "[1, 4, 9]"
-  explanation: "map returns a new array made of the block's results."
+    - "Hiroyuki Matsumoto"
+    - "Akihito Uesada"
+    - "Tatsuya Maruyama"
+  explanation: "Akihito Uesada is the mayor of Matsue, and Tatsuya Maruyama is the governor of Shimane Prefecture."
 
 - question: "What does this code print?"
   code: |
-    puts "ruby".upcase
-  answer: "RUBY"
+    puts "e-ztam".reverse.capitalize
+  answer: "Matz-e"
   wrong:
-    - "Ruby"
-    - "ruby"
-    - "nil"
-  explanation: "upcase converts the whole string to uppercase."
+    - "E-ztam"
+    - "matz-e"
+    - "Matz-E"
+  explanation: "reverse reverses the characters, and capitalize uppercases only the first letter."
 
-- question: "Which one is a Symbol?"
-  check: "%s.is_a?(Symbol)"
-  answer: ":matsue"
+- question: 'Which code returns "I love Spinel"?'
+  check: "(%s) == 'I love Spinel'"
+  answer: '"I love Ruby".sub("Ruby", "Spinel")'
   wrong:
-    - "\"matsue\""
-    - "matsue"
-    - "%w[matsue]"
-  explanation: "Symbols start with a colon; the same Symbol is always the same object."
-
-- question: "What does this code print?"
-  code: |
-    p 10.divmod(3)
-  answer: "[3, 1]"
-  wrong:
-    - "[3.33, 1]"
-    - "[1, 3]"
-    - "3"
-  explanation: "divmod returns [quotient, remainder]."
+    - '"I love Ruby".tr("Ruby", "Spinel")'
+    - '"I love Ruby".include?("Ruby")'
+    - '"I love Ruby" - "Ruby" + "Spinel"'
+  explanation: '"I love Ruby".tr("Ruby", "Spinel") returns "I love Spin".'
